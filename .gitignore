@@ -22,3 +22,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+
+api/node_modules
+api/dist
+api/admin-ui
+api/static/assets
+api/static/email/test-emails
+api/.env

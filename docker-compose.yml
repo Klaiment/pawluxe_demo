@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - 3000:3000
-    command: ["npm", "run", "start:server"]
+    command: ["npm", "run", "dev:server"]
     volumes:
       - /usr/src/app
     environment:
@@ -19,7 +19,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: ["npm", "run", "start:worker"]
+    command: ["npm", "run", "dev:worker"]
     volumes:
       - /usr/src/app
     environment:
