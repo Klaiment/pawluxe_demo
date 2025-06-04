@@ -44,6 +44,9 @@ export function getProductDetails(slug: string) {
         id
         name
         slug
+        customFields {
+          popularityScore
+        }
         description
         facetValues {
           id

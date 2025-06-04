@@ -16,7 +16,7 @@ import { GraphiqlPlugin } from "@vendure/graphiql-plugin";
 import "dotenv/config";
 import path from "path";
 import { CustomStockDisplayStrategy } from "./low-stock-strategy";
-import {PopularityScoresPlugin} from "@pinelab/vendure-plugin-popularity-scores";
+import { PopularityScoresPlugin } from "@pinelab/vendure-plugin-popularity-scores";
 
 const IS_DEV = process.env.APP_ENV === "dev";
 const serverPort = +process.env.PORT || 3000;
@@ -108,9 +108,9 @@ export const config: VendureConfig = {
       },
     }),
     PopularityScoresPlugin.init({
-      endpointSecret: 'test',
-      productFieldUiTab: 'Scores',
-      collectionFieldUiTab: 'Scores'
+      endpointSecret: "test",
+      productFieldUiTab: "Scores",
+      collectionFieldUiTab: "Scores",
     }),
   ],
 };

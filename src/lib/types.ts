@@ -2,6 +2,9 @@ export interface Product {
   id: string;
   name: string;
   slug: string;
+  customFields: {
+  popularityScore : number;
+}
   facetValues: {
     id: string;
     name: string;
