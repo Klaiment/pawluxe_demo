@@ -24,7 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
 import { useInView } from "react-intersection-observer";
-import { fetchProducts } from "@/services/productService.ts";
+import { fetchAllProductsFromApi } from "@/services/productService.ts";
 import { Link } from "react-router-dom";
 
 export default function ProductsPage() {
@@ -32,7 +32,7 @@ export default function ProductsPage() {
   useEffect(() => {
     const fetchAllProducts = async () => {
       try {
-        const products = await fetchProducts();
+        const products = await fetchAllProductsFromApi();
         // @ts-ignore
         setAllProducts((products.products as { items: Product[] }).items);
       } catch (error) {
@@ -545,7 +545,7 @@ export default function ProductsPage() {
                 {products.map((product) => (
                   <motion.div key={product.id} variants={item}>
                     <Link
-                      to={`/products/${product.slug}`}
+                      to={`/product/${product.slug}`}
                       className="block h-full"
                     >
                       <ProductCard product={product} showAddToCart={true} />
