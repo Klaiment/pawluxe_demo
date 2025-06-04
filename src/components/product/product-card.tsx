@@ -43,7 +43,7 @@ export function ProductCard({
     setIsHeartActive(!isHeartActive);
   };
 
-  const renderStars = (rating = 4.5) => {
+  const renderStars = (rating = product.customFields.popularityScore) => {
     return Array.from({ length: 5 }, (_, i) => (
       <Star
         key={i}

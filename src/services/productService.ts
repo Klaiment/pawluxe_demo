@@ -9,7 +9,9 @@ export async function fetchAllProductsFromApi() {
           id
           name
           slug
-
+          customFields {
+            popularityScore
+          }
           facetValues {
             id
             name

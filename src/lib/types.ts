@@ -3,8 +3,8 @@ export interface Product {
   name: string;
   slug: string;
   customFields: {
-  popularityScore : number;
-}
+    popularityScore: number;
+  };
   facetValues: {
     id: string;
     name: string;
