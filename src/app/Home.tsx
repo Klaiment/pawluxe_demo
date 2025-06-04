@@ -1,3 +1,10 @@
+import { ProductCard } from "@/components/product/product-card.tsx";
+
 export const Home = () => {
-  return <>Home component</>;
+  return (
+    <>
+      <p>Home component</p>
+      {/*<ProductCard />*/}
+    </>
+  );
 };
