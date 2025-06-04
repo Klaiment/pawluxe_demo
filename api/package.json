@@ -12,6 +12,7 @@
     "start": "concurrently npm:start:*"
   },
   "dependencies": {
+    "@pinelab/vendure-plugin-popularity-scores": "^1.9.0",
     "@vendure/admin-ui-plugin": "3.3.2",
     "@vendure/asset-server-plugin": "3.3.2",
     "@vendure/core": "3.3.2",

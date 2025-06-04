@@ -24,7 +24,7 @@ export const Breadcrumb = ({ productName }: { productName: string }) => {
           <Button
             variant="ghost"
             onClick={() => window.history.back()}
-            className="hover:bg-amber-50"
+            className="hover:bg-amber-50 cursor-pointer"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Retour
