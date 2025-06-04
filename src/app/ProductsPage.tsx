@@ -33,7 +33,6 @@ export default function ProductsPage() {
     const fetchAllProducts = async () => {
       try {
         const products = await fetchProducts();
-        console.log("Produits récupérés :", products);
         setAllProducts((products.products as { items: Product[] }).items);
       } catch (error) {
         console.error("Erreur lors de la récupération des produits :", error);
@@ -56,17 +55,27 @@ export default function ProductsPage() {
     triggerOnce: true,
   });
   const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    const images = document.querySelectorAll("img");
+    const promises = Array.from(images).map(
+        (img) =>
+            new Promise((resolve) => {
+              if (img.complete) {
+                resolve(true);
+              } else {
+                img.onload = () => resolve(true);
+                img.onerror = () => resolve(true);
+              }
+            }),
+    );
 
-  // Get unique categories
-  console.log(
-    "Catégories uniques :",
-    allProducts.map((product) => product.facetValues[0]?.name),
-  );
+    Promise.all(promises).then(() => setIsLoading(false));
+  }, []);
+
   const categories = Array.from(
     new Set(allProducts.map((product) => product.facetValues[0]?.name)),
   );
 
-  // Get min and max prices
   const minPrice = Math.min(
     ...allProducts.map(
       (product) => product.variantList.items[0].priceWithTax / 100,
@@ -79,17 +88,8 @@ export default function ProductsPage() {
   );
 
   useEffect(() => {
-    // Simulate loading
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 800);
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
     let filteredProducts = [...allProducts];
 
-    // Apply search filter
     if (searchQuery) {
       filteredProducts = filteredProducts.filter(
         (product) =>
@@ -103,14 +103,12 @@ export default function ProductsPage() {
       );
     }
 
-    // Apply category filter
     if (selectedCategories.length > 0) {
       filteredProducts = filteredProducts.filter((product) =>
         selectedCategories.includes(product.facetValues[0]?.name),
       );
     }
 
-    // Apply price range filter
     filteredProducts = filteredProducts.filter(
       (product) =>
         (product.variantList.items[0].priceWithTax / 100).toFixed(2) >=
@@ -119,7 +117,6 @@ export default function ProductsPage() {
           priceRange[1],
     );
 
-    // Apply in stock filter
     if (inStockOnly) {
       filteredProducts = filteredProducts.filter(
         (product) => product.variantList.items[0].stockLevel == "IN_STOCK",
@@ -205,18 +202,15 @@ export default function ProductsPage() {
 
   return (
     <main className="flex min-h-screen flex-col">
-      {/* Hero Header */}
       <section
         ref={headerRef}
         className="relative bg-gradient-to-br from-amber-900 via-amber-800 to-orange-900 py-16 md:py-24 overflow-hidden"
       >
-        {/* Background Elements */}
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-[url('/placeholder.svg?height=600&width=1200')] bg-cover bg-center opacity-10"></div>
           <div className="absolute inset-0 bg-gradient-to-br from-amber-900/90 via-amber-800/90 to-orange-900/90"></div>
         </div>
 
-        {/* Floating Elements */}
         <div className="absolute inset-0 z-10 overflow-hidden">
           <div
             className="absolute top-[20%] left-[10%] w-24 h-24 rounded-full bg-amber-500/20 blur-3xl animate-pulse"
@@ -272,10 +266,8 @@ export default function ProductsPage() {
         </div>
       </section>
 
-      {/* Filter and Products */}
       <section className="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 py-12">
         <div className="container mx-auto px-4 md:px-6">
-          {/* Filter Controls */}
           <div className="mb-8 sticky top-16 z-30 bg-white/80 backdrop-blur-md shadow-sm rounded-xl p-4 border border-amber-100">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
               <div className="flex items-center gap-2">
@@ -353,7 +345,6 @@ export default function ProductsPage() {
               </div>
             </div>
 
-            {/* Filters Panel */}
             <AnimatePresence>
               {isFilterOpen && (
                 <motion.div
@@ -364,7 +355,6 @@ export default function ProductsPage() {
                   className="overflow-hidden"
                 >
                   <div className="pt-6 border-t border-amber-100 mt-4 grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {/* Categories */}
                     <div>
                       <h3 className="font-medium mb-3 flex items-center">
                         <SlidersHorizontal className="h-4 w-4 mr-2 text-amber-600" />
@@ -395,7 +385,6 @@ export default function ProductsPage() {
                       </div>
                     </div>
 
-                    {/* Price Range */}
                     <div>
                       <h3 className="font-medium mb-3 flex items-center">
                         <SlidersHorizontal className="h-4 w-4 mr-2 text-amber-600" />
@@ -420,7 +409,6 @@ export default function ProductsPage() {
                       </div>
                     </div>
 
-                    {/* Other Filters */}
                     <div>
                       <h3 className="font-medium mb-3 flex items-center">
                         <SlidersHorizontal className="h-4 w-4 mr-2 text-amber-600" />
@@ -461,7 +449,6 @@ export default function ProductsPage() {
             </AnimatePresence>
           </div>
 
-          {/* Active Filters */}
           {getActiveFiltersCount() > 0 && (
             <div className="mb-6 flex flex-wrap gap-2">
               {selectedCategories.map((category) => (
@@ -533,7 +520,6 @@ export default function ProductsPage() {
             </div>
           )}
 
-          {/* Products Grid */}
           <div ref={productsRef}>
             {isLoading ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
