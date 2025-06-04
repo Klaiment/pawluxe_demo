@@ -33,6 +33,7 @@ export default function ProductsPage() {
     const fetchAllProducts = async () => {
       try {
         const products = await fetchProducts();
+        // @ts-ignore
         setAllProducts((products.products as { items: Product[] }).items);
       } catch (error) {
         console.error("Erreur lors de la récupération des produits :", error);
@@ -49,7 +50,7 @@ export default function ProductsPage() {
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 200]);
   const [inStockOnly, setInStockOnly] = useState(false);
   const [featuredOnly, setFeaturedOnly] = useState(false);
-  const [headerRef, headerInView] = useInView({ threshold: 0.1 });
+  const [headerRef] = useInView({ threshold: 0.1 });
   const [productsRef, productsInView] = useInView({
     threshold: 0.1,
     triggerOnce: true,
@@ -58,15 +59,15 @@ export default function ProductsPage() {
   useEffect(() => {
     const images = document.querySelectorAll("img");
     const promises = Array.from(images).map(
-        (img) =>
-            new Promise((resolve) => {
-              if (img.complete) {
-                resolve(true);
-              } else {
-                img.onload = () => resolve(true);
-                img.onerror = () => resolve(true);
-              }
-            }),
+      (img) =>
+        new Promise((resolve) => {
+          if (img.complete) {
+            resolve(true);
+          } else {
+            img.onload = () => resolve(true);
+            img.onerror = () => resolve(true);
+          }
+        }),
     );
 
     Promise.all(promises).then(() => setIsLoading(false));
@@ -109,13 +110,10 @@ export default function ProductsPage() {
       );
     }
 
-    filteredProducts = filteredProducts.filter(
-      (product) =>
-        (product.variantList.items[0].priceWithTax / 100).toFixed(2) >=
-          priceRange[0] &&
-        (product.variantList.items[0].priceWithTax / 100).toFixed(2) <=
-          priceRange[1],
-    );
+    filteredProducts = filteredProducts.filter((product) => {
+      const price = product.variantList.items[0].priceWithTax / 100;
+      return price >= priceRange[0] && price <= priceRange[1];
+    });
 
     if (inStockOnly) {
       filteredProducts = filteredProducts.filter(
@@ -126,7 +124,7 @@ export default function ProductsPage() {
     // Apply featured filter
     if (featuredOnly) {
       filteredProducts = filteredProducts.filter(
-          (product) => product.facetValues[0]?.name === "top"
+        (product) => product.facetValues[0]?.name === "top",
       );
     }
 
@@ -362,26 +360,26 @@ export default function ProductsPage() {
                       </h3>
                       <div className="space-y-2">
                         {categories
-                            .filter((category) => category !== "top")
-                            .map((category) => (
-                          <div key={category} className="flex items-center">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => toggleCategory(category)}
-                              className={`flex items-center justify-between w-full text-left ${
-                                selectedCategories.includes(category)
-                                  ? "bg-amber-100 border-amber-300 text-amber-800"
-                                  : "border-amber-200 text-amber-700 hover:bg-amber-50"
-                              }`}
-                            >
-                              <span>{category}</span>
-                              {selectedCategories.includes(category) && (
-                                <Check className="h-4 w-4 ml-2" />
-                              )}
-                            </Button>
-                          </div>
-                        ))}
+                          .filter((category) => category !== "top")
+                          .map((category) => (
+                            <div key={category} className="flex items-center">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => toggleCategory(category)}
+                                className={`flex items-center justify-between w-full text-left ${
+                                  selectedCategories.includes(category)
+                                    ? "bg-amber-100 border-amber-300 text-amber-800"
+                                    : "border-amber-200 text-amber-700 hover:bg-amber-50"
+                                }`}
+                              >
+                                <span>{category}</span>
+                                {selectedCategories.includes(category) && (
+                                  <Check className="h-4 w-4 ml-2" />
+                                )}
+                              </Button>
+                            </div>
+                          ))}
                       </div>
                     </div>
 

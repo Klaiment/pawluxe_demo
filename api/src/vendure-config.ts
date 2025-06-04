@@ -15,6 +15,7 @@ import { AdminUiPlugin } from "@vendure/admin-ui-plugin";
 import { GraphiqlPlugin } from "@vendure/graphiql-plugin";
 import "dotenv/config";
 import path from "path";
+import {CustomStockDisplayStrategy} from "./low-stock-strategy";
 
 const IS_DEV = process.env.APP_ENV === "dev";
 const serverPort = +process.env.PORT || 3000;
@@ -33,6 +34,9 @@ export const config: VendureConfig = {
           shopApiDebug: true,
         }
       : {}),
+  },
+  catalogOptions: {
+    stockDisplayStrategy: new CustomStockDisplayStrategy(),
   },
   authOptions: {
     tokenMethod: ["bearer", "cookie"],
