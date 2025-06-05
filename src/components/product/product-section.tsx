@@ -19,33 +19,26 @@ import {
 import { Badge } from "../ui/badge";
 import { useState } from "react";
 import type { Product } from "@/lib/types";
-import { useInView } from "react-intersection-observer";
 import { formatCurrency } from "@/lib/format-currency.ts";
 import { useCart } from "@/components/cart/cart-provider.tsx";
+import { successAddToBasket } from "@/components/cart/toast.tsx";
 
-export const ProductSection = ({ productDetails }) => {
+export const ProductSection = ({
+  productDetails,
+}: {
+  productDetails: Product;
+}) => {
   const { addToCart } = useCart();
-  const [product, setProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState(1);
-  const [isLoading, setIsLoading] = useState(true);
   const [isWishlisted, setIsWishlisted] = useState(false);
-  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
-  const [viewCount, setViewCount] = useState(0);
+  const viewCount = (Math.random() * 1000 + 1000).toFixed(0);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [selectedTab, setSelectedTab] = useState("description");
   const [showFullDescription, setShowFullDescription] = useState(false);
-  const [headerRef, headerInView] = useInView({ threshold: 0.1 });
-  const [detailsRef, detailsInView] = useInView({
-    threshold: 0.1,
-    triggerOnce: true,
-  });
-  const [relatedRef, relatedInView] = useInView({
-    threshold: 0.1,
-    triggerOnce: true,
-  });
+
   const handleAddToCart = () => {
-    if (product) {
-      addToCart({ ...product, quantity });
+    if (productDetails) {
+      addToCart({ ...productDetails, quantity });
+      successAddToBasket({ productDetails, quantity });
     }
   };
   const decreaseQuantity = () => {
@@ -56,7 +49,7 @@ export const ProductSection = ({ productDetails }) => {
 
   const increaseQuantity = () => {
     if (
-      product &&
+      productDetails &&
       quantity < productDetails.variantList.items[0].actualStockLevel
     ) {
       setQuantity(quantity + 1);
@@ -77,13 +70,16 @@ export const ProductSection = ({ productDetails }) => {
           <div className="aspect-square relative">
             <AnimatePresence mode="wait">
               <motion.img
-                key={productDetails.id}
-                src={productDetails?.featuredAsset?.preview || "/placeholder.svg"}
+                key={currentImageIndex}
+                src={
+                  productDetails?.assets[currentImageIndex]?.preview ||
+                  "/placeholder.svg"
+                }
                 alt={productDetails.slug}
                 className="w-full h-full object-cover"
-                initial={{ opacity: 0, scale: 1.1 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50 }}
                 transition={{ duration: 0.5 }}
               />
             </AnimatePresence>
@@ -231,7 +227,10 @@ export const ProductSection = ({ productDetails }) => {
 
           <div className="flex items-baseline space-x-4 mb-6">
             <p className="text-3xl font-bold text-amber-800 font-playfair">
-              {formatCurrency(productDetails.variantList.items[0].priceWithTax, "€")}
+              {formatCurrency(
+                productDetails.variantList.items[0].priceWithTax,
+                "€",
+              )}
             </p>
             <Badge className="bg-green-100 text-green-700 border-green-200">
               <Truck className="h-3 w-3 mr-1" />
@@ -242,15 +241,28 @@ export const ProductSection = ({ productDetails }) => {
           {/* Description Preview */}
           <div className="mb-6">
             <p className="text-muted-foreground leading-relaxed">
-              {showFullDescription
-                ? productDetails.description
-                : `${productDetails.description.substring(0, 150)}...`}
-              <button
-                onClick={() => setShowFullDescription(!showFullDescription)}
-                className="text-amber-700 hover:text-amber-800 ml-2 font-medium"
-              >
-                {showFullDescription ? "Voir moins" : "Voir plus"}
-              </button>
+              {showFullDescription ||
+              productDetails.description.length <= 100 ? (
+                <span
+                  dangerouslySetInnerHTML={{
+                    __html: productDetails.description,
+                  }}
+                />
+              ) : (
+                <>
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html: `${productDetails.description.substring(0, 100)}...`,
+                    }}
+                  />
+                  <button
+                    onClick={() => setShowFullDescription(!showFullDescription)}
+                    className="text-amber-700 hover:text-amber-800 ml-2 font-medium"
+                  >
+                    {showFullDescription ? "Voir moins" : "Voir plus"}
+                  </button>
+                </>
+              )}
             </p>
           </div>
         </div>

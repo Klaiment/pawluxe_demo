@@ -13,6 +13,6 @@ export function formatCurrency(
     }).format(majorUnits);
   } catch (e: any) {
     // A fallback in case the NumberFormat fails for any reason
-    return majorUnits.toFixed(2);
+    return majorUnits.toFixed(2) + " " + currencyCode;
   }
 }
