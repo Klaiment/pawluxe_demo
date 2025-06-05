@@ -79,7 +79,7 @@ export function FeaturedProducts({ featuredProducts }) {
                     .map((product) => (
                       <motion.div key={product.id} variants={item}>
                         <Link
-                          to={`/products/${product.id}`}
+                          to={`/products/${product.slug}`}
                           className="group block h-full"
                         >
                           <ProductCard product={product} showAddToCart={true} />

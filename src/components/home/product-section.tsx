@@ -76,7 +76,7 @@ export const ProductSectionHomePage = () => {
           </p>
         </motion.div>
 
-        {/*<FeaturedProducts featuredProducts={featuredProducts} />*/}
+        <FeaturedProducts featuredProducts={featuredProducts} />
 
         <div className="flex justify-center mt-16">
           <Button
