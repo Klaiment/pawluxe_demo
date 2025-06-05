@@ -14,6 +14,11 @@ export interface Product {
     id: string;
     preview: string;
   };
+  assets: {
+    id: string;
+    name: string;
+    preview: string;
+  };
   variantList: {
     items: {
       id: string;

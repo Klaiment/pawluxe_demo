@@ -21,6 +21,11 @@ export async function fetchAllProductsFromApi() {
             id
             preview
           }
+          assets {
+            id
+            name
+            preview
+          }
           variantList {
             items {
               id
@@ -58,6 +63,11 @@ export function getProductDetails(slug: string) {
           id
           preview
         }
+        assets {
+          id
+          name
+          preview
+        }
         variantList {
           items {
             id
@@ -66,6 +76,7 @@ export function getProductDetails(slug: string) {
             productId
             price
             stockLevel
+            actualStockLevel
           }
         }
       }

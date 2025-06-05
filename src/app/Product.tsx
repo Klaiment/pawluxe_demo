@@ -4,6 +4,7 @@ import { getProductDetails } from "@/services/productService.ts";
 import { useEffect } from "react";
 import type { Product } from "@/lib/types.ts";
 import { Breadcrumb } from "@/components/layout/breadcrumb.tsx";
+import { ProductSection } from "@/components/product/product-section.tsx";
 
 export const Product: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -23,9 +24,8 @@ export const Product: React.FC = () => {
     <main className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
       <Breadcrumb productName={product?.name} />
 
-      <div className="flex flex-col items-center justify-center h-screen">
-        <h1 className="text-2xl font-bold mb-4">Product Page</h1>
-        <p className="text-lg">This is the product page for {slug}.</p>
+      <div className="container mx-auto px-4 md:px-6 py-8">
+        {product && <ProductSection productDetails={product} />}
       </div>
     </main>
   );
