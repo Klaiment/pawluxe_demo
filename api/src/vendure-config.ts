@@ -17,6 +17,7 @@ import "dotenv/config";
 import path from "path";
 import { CustomStockDisplayStrategy } from "./low-stock-strategy";
 import { PopularityScoresPlugin } from "@pinelab/vendure-plugin-popularity-scores";
+import { ActualStockLevelPlugin } from "./plugins/actual-stock-level/actual-stock-level.plugin";
 
 const IS_DEV = process.env.APP_ENV === "dev";
 const serverPort = +process.env.PORT || 3000;
@@ -71,6 +72,7 @@ export const config: VendureConfig = {
   customFields: {},
   plugins: [
     GraphiqlPlugin.init(),
+    ActualStockLevelPlugin,
     AssetServerPlugin.init({
       route: "assets",
       assetUploadDir: path.join(__dirname, "../static/assets"),
