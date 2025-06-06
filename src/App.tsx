@@ -8,27 +8,31 @@ import { Footer } from "@/components/layout/footer.tsx";
 import { Product } from "@/app/Product.tsx";
 import ProductsPage from "@/app/ProductsPage.tsx";
 import { Toaster } from "sonner";
+import { CartProvider } from "@/components/cart/cart-provider.tsx";
 
 function App() {
   return (
-    <Router>
-      <Header />
-      <div className="flex-1">
-        <Toaster
-          position="bottom-right"
-          expand={true}
-          richColors={false}
-          closeButton={true}
-        />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/products" element={<ProductsPage />} />
-          <Route path="/product/:slug" element={<Product />} />
-          <Route path="/cart" element={<Cart />} />
-        </Routes>
-      </div>
-      <Footer />
-    </Router>
+    <CartProvider>
+      <Router>
+        <Header />
+        <div className="flex-1">
+          <Toaster
+            position="bottom-right"
+            expand={true}
+            richColors={false}
+            closeButton={true}
+          />
+
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/products" element={<ProductsPage />} />
+            <Route path="/product/:slug" element={<Product />} />
+            <Route path="/cart" element={<Cart />} />
+          </Routes>
+        </div>
+        <Footer />
+      </Router>
+    </CartProvider>
   );
 }
 

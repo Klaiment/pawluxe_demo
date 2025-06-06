@@ -1,7 +1,6 @@
 import { ShoppingBag, Gift, ArrowRight, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { formatCurrency } from "@/lib/format-currency";
 
 interface CartSummaryProps {
   itemCount: number;
@@ -55,7 +54,7 @@ export const CartSummary = ({
 
         <div className="flex justify-between font-semibold text-lg">
           <span>Total</span>
-          <span className="text-amber-800">{formatCurrency(total, "€")}</span>
+          <span className="text-amber-800">{total.toFixed(2)}  €</span>
         </div>
 
         {subtotal >= freeShippingThreshold && (

@@ -1,9 +1,10 @@
-import { Badge, Menu, ShoppingBag, X } from "lucide-react";
+import { Menu, ShoppingBag, X } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
 import { useEffect, useState } from "react";
 import { useMobile } from "@/hooks/use-mobile";
 import { useCart } from "@/components/cart/cart-provider.tsx";
 import { Link } from "react-router";
+import {BadgeCustom} from "@/components/ui/badge-custom.tsx";
 
 export const Header = () => {
   const { cart } = useCart();
@@ -12,6 +13,7 @@ export const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
 
   const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+  console.log("Total items in cart:", totalItems);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -78,9 +80,9 @@ export const Header = () => {
               <Button variant="ghost" size="icon" className={"cursor-pointer"}>
                 <ShoppingBag className="h-5 w-5" />
                 {totalItems > 0 && (
-                  <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-amber-600">
+                  <BadgeCustom className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-amber-600">
                     {totalItems}
-                  </Badge>
+                  </BadgeCustom>
                 )}
                 <span className="sr-only">Panier</span>
               </Button>
@@ -135,9 +137,7 @@ export const Header = () => {
               onClick={() => setIsMenuOpen(false)}
             >
               Panier
-              {totalItems > 0 && (
-                <Badge className="bg-amber-600">{totalItems}</Badge>
-              )}
+              <BadgeCustom className="bg-amber-600">{totalItems}</BadgeCustom>
             </Link>
           </nav>
         </div>

@@ -17,7 +17,7 @@ export const Cart = () => {
 
   const subtotal = cart.reduce(
     (total, item) =>
-      total + item.variantList.items[0].priceWithTax * item.quantity,
+      total + (item.variantList.items[0].priceWithTax/100) * item.quantity,
     0,
   );
   const freeShippingThreshold = 50;

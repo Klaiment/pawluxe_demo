@@ -34,12 +34,7 @@ export const ProductSection = ({
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showFullDescription, setShowFullDescription] = useState(false);
 
-  const handleAddToCart = () => {
-    if (productDetails) {
-      addToCart({ ...productDetails, quantity });
-      // successAddToBasket({ productDetails, quantity });
-    }
-  };
+
   const decreaseQuantity = () => {
     if (quantity > 1) {
       setQuantity(quantity - 1);
@@ -347,7 +342,9 @@ export const ProductSection = ({
           </div>
 
           <Button
-            onClick={handleAddToCart}
+            onClick={() =>{
+              addToCart({ ...productDetails, quantity })
+            }}
             className="w-full bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white py-6 text-lg font-medium transition-all duration-300 hover:shadow-lg transform hover:scale-[1.02]"
             size="lg"
           >
