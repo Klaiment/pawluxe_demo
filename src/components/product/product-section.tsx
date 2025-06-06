@@ -1,3 +1,5 @@
+"use client";
+
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "../ui/button";
 import {
@@ -27,9 +29,10 @@ export const ProductSection = ({
 }: {
   productDetails: Product;
 }) => {
-  const { addToCart } = useCart();
+  const { addToCart, isLoading } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
   const viewCount = (Math.random() * 1000 + 1000).toFixed(0);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showFullDescription, setShowFullDescription] = useState(false);
@@ -46,6 +49,20 @@ export const ProductSection = ({
       quantity < productDetails.variantList.items[0].actualStockLevel
     ) {
       setQuantity(quantity + 1);
+    }
+  };
+
+  const handleAddToCart = async () => {
+    setIsAdding(true);
+    try {
+      // Ajouter chaque unité individuellement pour respecter la quantité
+      for (let i = 0; i < quantity; i++) {
+        await addToCart(productDetails.variantList.items[0].id, 1);
+      }
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+    } finally {
+      setIsAdding(false);
     }
   };
 
@@ -209,14 +226,6 @@ export const ProductSection = ({
                   className={`h-4 w-4 ${isWishlisted ? "fill-red-500" : ""}`}
                 />
               </Button>
-              {/*              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleShare}
-                className="border-amber-200 text-amber-700 hover:bg-amber-50"
-              >
-                <Share2 className="h-4 w-4" />
-              </Button>*/}
             </div>
           </div>
 
@@ -341,17 +350,37 @@ export const ProductSection = ({
           </div>
 
           <Button
-            onClick={() => {
-              addToCart({ ...productDetails, quantity });
-            }}
-            className="w-full bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white py-6 text-lg font-medium transition-all duration-300 hover:shadow-lg transform hover:scale-[1.02]"
+            onClick={handleAddToCart}
+            disabled={
+              isAdding ||
+              isLoading ||
+              productDetails.variantList.items[0].actualStockLevel === 0
+            }
+            className="w-full bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white py-6 text-lg font-medium transition-all duration-300 hover:shadow-lg transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
             size="lg"
           >
-            <ShoppingBag className="mr-3 h-5 w-5" />
-            Ajouter au panier •{" "}
-            {formatCurrency(
-              productDetails.variantList.items[0].priceWithTax * quantity,
-              "€",
+            {isAdding || isLoading ? (
+              <div className="flex items-center">
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{
+                    duration: 0.5,
+                    repeat: Number.POSITIVE_INFINITY,
+                    ease: "linear",
+                  }}
+                  className="w-5 h-5 border-2 border-white border-t-transparent rounded-full mr-3"
+                />
+                Ajout en cours...
+              </div>
+            ) : (
+              <div className="flex items-center">
+                <ShoppingBag className="mr-3 h-5 w-5" />
+                Ajouter au panier •{" "}
+                {formatCurrency(
+                  productDetails.variantList.items[0].priceWithTax * quantity,
+                  "€",
+                )}
+              </div>
             )}
           </Button>
 

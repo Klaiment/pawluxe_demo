@@ -32,8 +32,64 @@ export interface Product {
   };
 }
 
-export interface CartItem extends Product {
+// Nouveau type pour les articles du panier basé sur Vendure
+export interface CartItem {
+  id: string; // orderLineId
+  productVariant: {
+    id: string;
+    name: string;
+    price: number;
+    priceWithTax: number;
+    product: {
+      id: string;
+      name: string;
+      slug: string;
+      featuredAsset: {
+        id: string;
+        preview: string;
+      };
+    };
+  };
   quantity: number;
+  linePrice: number;
+  linePriceWithTax: number;
+}
+
+// Type pour la commande Vendure
+export interface VendureOrder {
+  id: string;
+  code: string;
+  state: string;
+  total: number;
+  totalWithTax: number;
+  totalQuantity: number;
+  subTotal: number;
+  subTotalWithTax: number;
+  shipping: number;
+  shippingWithTax: number;
+  lines: CartItem[];
+  shippingAddress?: {
+    fullName: string;
+    streetLine1: string;
+    city: string;
+    postalCode: string;
+    country: string;
+    phoneNumber?: string;
+  };
+  billingAddress?: {
+    fullName: string;
+    streetLine1: string;
+    city: string;
+    postalCode: string;
+    country: string;
+    phoneNumber?: string;
+  };
+  customer?: {
+    firstName: string;
+    lastName: string;
+    emailAddress: string;
+    phoneNumber?: string;
+  };
 }
 
 export interface ProductResponse {
@@ -62,4 +118,19 @@ export interface CheckoutData {
   sameAsBilling: boolean;
   shippingMethod: string;
   paymentMethod: string;
+}
+
+export interface ShippingMethod {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  priceWithTax: number;
+}
+
+export interface PaymentMethod {
+  id: string;
+  name: string;
+  description: string;
+  isEligible: boolean;
 }

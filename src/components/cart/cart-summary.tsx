@@ -1,24 +1,27 @@
+"use client";
+
 import { ShoppingBag, Gift, ArrowRight, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { useCart } from "./cart-provider";
 
 interface CartSummaryProps {
-  itemCount: number;
-  subtotal: number;
-  shipping: number;
-  total: number;
-  freeShippingThreshold: number;
   onCheckout: () => void;
 }
 
-export const CartSummary = ({
-  itemCount,
-  subtotal,
-  shipping,
-  total,
-  freeShippingThreshold,
-  onCheckout,
-}: CartSummaryProps) => {
+export const CartSummary = ({ onCheckout }: CartSummaryProps) => {
+  const { order } = useCart();
+
+  if (!order) {
+    return null;
+  }
+
+  const freeShippingThreshold = 5000; // 50€ en centimes
+  const subtotal = order.subTotalWithTax / 100;
+  const shipping = order.shippingWithTax / 100;
+  const total = order.totalWithTax / 100;
+  const itemCount = order.totalQuantity;
+
   return (
     <div className="bg-white rounded-lg border border-amber-100 p-6 sticky top-24 shadow-sm">
       <h2 className="text-xl font-semibold mb-6 flex items-center">
@@ -57,7 +60,7 @@ export const CartSummary = ({
           <span className="text-amber-800">{total.toFixed(2)} €</span>
         </div>
 
-        {subtotal >= freeShippingThreshold && (
+        {order.subTotalWithTax >= freeShippingThreshold && (
           <div className="bg-green-50 border border-green-200 rounded-lg p-3">
             <p className="text-sm text-green-700 font-medium flex items-center">
               <Gift className="h-4 w-4 mr-2" />

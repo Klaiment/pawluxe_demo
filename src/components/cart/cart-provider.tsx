@@ -7,116 +7,99 @@ import {
   useEffect,
   type ReactNode,
 } from "react";
-import type { CartItem } from "@/lib/types";
+import type { CartItem, VendureOrder } from "@/lib/types";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/format-currency";
+import {
+  getActiveOrder,
+  addItemToOrder,
+  adjustOrderLine,
+  removeOrderLine,
+} from "@/services/orderService";
 
 interface CartContextType {
+  order: VendureOrder | null;
   cart: CartItem[];
-  addToCart: (item: CartItem) => void;
-  removeFromCart: (id: string) => void;
-  updateCartItemQuantity: (id: string, quantity: number) => void;
+  addToCart: (productVariantId: string, quantity: number) => Promise<void>;
+  removeFromCart: (orderLineId: string) => Promise<void>;
+  updateCartItemQuantity: (
+    orderLineId: string,
+    quantity: number,
+  ) => Promise<void>;
   clearCart: () => void;
+  refreshOrder: () => Promise<void>;
+  isLoading: boolean;
 }
 
 const CartContext = createContext<CartContextType>({
+  order: null,
   cart: [],
-  addToCart: () => {},
-  removeFromCart: () => {},
-  updateCartItemQuantity: () => {},
+  addToCart: async () => {},
+  removeFromCart: async () => {},
+  updateCartItemQuantity: async () => {},
   clearCart: () => {},
+  refreshOrder: async () => {},
+  isLoading: false,
 });
 
 export const useCart = () => useContext(CartContext);
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [cart, setCart] = useState<CartItem[]>([]);
-  const [isClient, setIsClient] = useState(false);
+  const [order, setOrder] = useState<VendureOrder | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Récupérer la commande active au chargement
+  const refreshOrder = async () => {
+    try {
+      setIsLoading(true);
+      const activeOrder = await getActiveOrder();
+      setOrder(activeOrder);
+    } catch (error) {
+      console.error("Error fetching active order:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    setIsClient(true);
-    const savedCart = localStorage.getItem("pawluxe-cart");
-    if (savedCart) {
-      try {
-        setCart(JSON.parse(savedCart));
-      } catch (error) {
-        console.error("Error parsing cart from localStorage:", error);
-      }
-    }
+    refreshOrder();
   }, []);
 
-  useEffect(() => {
-    if (isClient) {
-      localStorage.setItem("pawluxe-cart", JSON.stringify(cart));
-    }
-  }, [cart, isClient]);
+  // Calculer le panier à partir de la commande
+  const cart = order?.lines || [];
 
-  const addToCart = (item: CartItem) => {
-    setCart((prevCart) => {
-      const existingItemIndex = prevCart.findIndex((i) => i.id === item.id);
+  const addToCart = async (productVariantId: string, quantity: number) => {
+    try {
+      setIsLoading(true);
+      const updatedOrder = await addItemToOrder(productVariantId, quantity);
+      setOrder(updatedOrder);
 
-      if (existingItemIndex !== -1) {
-        const updatedCart = [...prevCart];
-        const newQuantity =
-          updatedCart[existingItemIndex].quantity + item.quantity;
-        const finalQuantity = Math.min(
-          newQuantity,
-          item.variantList.items[0].actualStockLevel,
-        );
+      // Trouver le produit ajouté pour le toast
+      const addedLine = updatedOrder.lines.find(
+        (line) => line.productVariant.id === productVariantId,
+      );
 
-        updatedCart[existingItemIndex].quantity = finalQuantity;
-
-        toast.success("Quantité mise à jour !", {
-          description: (
-            <div className="flex items-center gap-3 mt-2">
-              <div className="w-12 h-12 bg-gray-100 rounded-md flex items-center justify-center">
-                <img
-                  src={item.featuredAsset.preview || "/placeholder.svg"}
-                  alt={item.name}
-                  className="w-full h-full object-cover rounded-md"
-                />
-              </div>
-              <div className="flex-1">
-                <p className="font-medium text-gray-900">{item.name}</p>
-                <p className="text-sm text-gray-500">
-                  Quantité: {finalQuantity} •{" "}
-                  {formatCurrency(
-                    item.variantList.items[0].priceWithTax * finalQuantity,
-                    "€",
-                  )}
-                </p>
-              </div>
-            </div>
-          ),
-          duration: 5000,
-          className: "bg-amber-50 border-amber-200",
-          style: {
-            backgroundColor: "#fef3c7",
-            borderColor: "#fcd34d",
-            color: "#92400e",
-          },
-        });
-
-        return updatedCart;
-      } else {
+      if (addedLine) {
         toast.success("Ajouté au panier !", {
           description: (
             <div className="flex items-center gap-3 mt-2">
               <div className="w-12 h-12 bg-gray-100 rounded-md flex items-center justify-center">
                 <img
-                  src={item.featuredAsset.preview || "/placeholder.svg"}
-                  alt={item.name}
+                  src={
+                    addedLine.productVariant.product.featuredAsset.preview ||
+                    "/placeholder.svg"
+                  }
+                  alt={addedLine.productVariant.product.name}
                   className="w-full h-full object-cover rounded-md"
                 />
               </div>
               <div className="flex-1">
-                <p className="font-medium text-gray-900">{item.name}</p>
+                <p className="font-medium text-gray-900">
+                  {addedLine.productVariant.product.name}
+                </p>
                 <p className="text-sm text-gray-500">
-                  Quantité: {item.quantity} •{" "}
-                  {formatCurrency(
-                    item.variantList.items[0].priceWithTax * item.quantity,
-                    "€",
-                  )}
+                  Quantité: {addedLine.quantity} •{" "}
+                  {formatCurrency(addedLine.linePriceWithTax, "€")}
                 </p>
               </div>
             </div>
@@ -129,117 +112,156 @@ export function CartProvider({ children }: { children: ReactNode }) {
             color: "#166534",
           },
         });
-
-        return [...prevCart, item];
       }
-    });
-  };
-
-  const removeFromCart = (id: string) => {
-    const itemToRemove = cart.find((item) => item.id === id);
-
-    setCart((prevCart) => prevCart.filter((item) => item.id !== id));
-
-    if (itemToRemove) {
-      toast.error("Produit retiré", {
-        description: (
-          <div className="flex items-center gap-3 mt-2">
-            <div className="w-12 h-12 bg-gray-100 rounded-md flex items-center justify-center opacity-60">
-              <img
-                src={itemToRemove.featuredAsset.preview || "/placeholder.svg"}
-                alt={itemToRemove.name}
-                className="w-full h-full object-cover rounded-md"
-              />
-            </div>
-            <div className="flex-1">
-              <p className="font-medium text-gray-900">{itemToRemove.name}</p>
-              <p className="text-sm text-gray-500">Retiré du panier</p>
-            </div>
-          </div>
-        ),
-        duration: 4000,
-        className: "bg-red-50 border-red-200",
-        style: {
-          backgroundColor: "#fef2f2",
-          borderColor: "#fecaca",
-          color: "#dc2626",
-        },
+    } catch (error) {
+      console.error("Error adding item to cart:", error);
+      toast.error("Erreur lors de l'ajout au panier", {
+        description: "Veuillez réessayer",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const updateCartItemQuantity = (id: string, quantity: number) => {
-    const item = cart.find((item) => item.id === id);
+  const removeFromCart = async (orderLineId: string) => {
+    try {
+      setIsLoading(true);
 
+      // Trouver l'item avant suppression pour le toast
+      const itemToRemove = cart.find((item) => item.id === orderLineId);
+
+      const updatedOrder = await removeOrderLine(orderLineId);
+      setOrder(updatedOrder);
+
+      if (itemToRemove) {
+        toast.error("Produit retiré", {
+          description: (
+            <div className="flex items-center gap-3 mt-2">
+              <div className="w-12 h-12 bg-gray-100 rounded-md flex items-center justify-center opacity-60">
+                <img
+                  src={
+                    itemToRemove.productVariant.product.featuredAsset.preview ||
+                    "/placeholder.svg"
+                  }
+                  alt={itemToRemove.productVariant.product.name}
+                  className="w-full h-full object-cover rounded-md"
+                />
+              </div>
+              <div className="flex-1">
+                <p className="font-medium text-gray-900">
+                  {itemToRemove.productVariant.product.name}
+                </p>
+                <p className="text-sm text-gray-500">Retiré du panier</p>
+              </div>
+            </div>
+          ),
+          duration: 4000,
+          className: "bg-red-50 border-red-200",
+          style: {
+            backgroundColor: "#fef2f2",
+            borderColor: "#fecaca",
+            color: "#dc2626",
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Error removing item from cart:", error);
+      toast.error("Erreur lors de la suppression", {
+        description: "Veuillez réessayer",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const updateCartItemQuantity = async (
+    orderLineId: string,
+    quantity: number,
+  ) => {
     if (quantity === 0) {
-      removeFromCart(id);
+      await removeFromCart(orderLineId);
       return;
     }
 
-    setCart((prevCart) =>
-      prevCart.map((item) => (item.id === id ? { ...item, quantity } : item)),
-    );
+    try {
+      setIsLoading(true);
 
-    if (item) {
-      toast.success("Quantité modifiée", {
-        description: (
-          <div className="flex items-center gap-3 mt-2">
-            <div className="w-12 h-12 bg-gray-100 rounded-md flex items-center justify-center">
-              <img
-                src={item.featuredAsset.preview || "/placeholder.svg"}
-                alt={item.name}
-                className="w-full h-full object-cover rounded-md"
-              />
+      const item = cart.find((item) => item.id === orderLineId);
+      const updatedOrder = await adjustOrderLine(orderLineId, quantity);
+      setOrder(updatedOrder);
+
+      if (item) {
+        toast.success("Quantité modifiée", {
+          description: (
+            <div className="flex items-center gap-3 mt-2">
+              <div className="w-12 h-12 bg-gray-100 rounded-md flex items-center justify-center">
+                <img
+                  src={
+                    item.productVariant.product.featuredAsset.preview ||
+                    "/placeholder.svg"
+                  }
+                  alt={item.productVariant.product.name}
+                  className="w-full h-full object-cover rounded-md"
+                />
+              </div>
+              <div className="flex-1">
+                <p className="font-medium text-gray-900">
+                  {item.productVariant.product.name}
+                </p>
+                <p className="text-sm text-gray-500">
+                  Nouvelle quantité: {quantity} •{" "}
+                  {formatCurrency(
+                    item.productVariant.priceWithTax * quantity,
+                    "€",
+                  )}
+                </p>
+              </div>
             </div>
-            <div className="flex-1">
-              <p className="font-medium text-gray-900">{item.name}</p>
-              <p className="text-sm text-gray-500">
-                Nouvelle quantité: {quantity} •{" "}
-                {formatCurrency(
-                  item.variantList.items[0].priceWithTax * quantity,
-                  "€",
-                )}
-              </p>
-            </div>
-          </div>
-        ),
-        duration: 4000,
-        className: "bg-blue-50 border-blue-200",
-        style: {
-          backgroundColor: "#eff6ff",
-          borderColor: "#93c5fd",
-          color: "#1d4ed8",
-        },
+          ),
+          duration: 4000,
+          className: "bg-blue-50 border-blue-200",
+          style: {
+            backgroundColor: "#eff6ff",
+            borderColor: "#93c5fd",
+            color: "#1d4ed8",
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Error updating item quantity:", error);
+      toast.error("Erreur lors de la modification", {
+        description: "Veuillez réessayer",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const clearCart = () => {
-    const itemCount = cart.length;
-    setCart([]);
-
-    if (itemCount > 0) {
-      toast.info("Panier vidé", {
-        description: `${itemCount} produit${itemCount > 1 ? "s" : ""} retiré${itemCount > 1 ? "s" : ""} du panier`,
-        duration: 3000,
-        className: "bg-gray-50 border-gray-200",
-        style: {
-          backgroundColor: "#f9fafb",
-          borderColor: "#d1d5db",
-          color: "#374151",
-        },
-      });
-    }
+    setOrder(null);
+    toast.info("Panier vidé", {
+      description: "Votre commande a été finalisée",
+      duration: 3000,
+      className: "bg-gray-50 border-gray-200",
+      style: {
+        backgroundColor: "#f9fafb",
+        borderColor: "#d1d5db",
+        color: "#374151",
+      },
+    });
   };
 
   return (
     <CartContext.Provider
       value={{
+        order,
         cart,
         addToCart,
         removeFromCart,
         updateCartItemQuantity,
         clearCart,
+        refreshOrder,
+        isLoading,
       }}
     >
       {children}

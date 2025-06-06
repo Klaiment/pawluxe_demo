@@ -7,6 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArrowRight, User, Mail, Phone, MapPin } from "lucide-react";
 import type { CheckoutData } from "@/lib/types";
+import {
+  setCustomerForOrder,
+  setOrderBillingAddress,
+} from "@/services/orderService";
+import { useCart } from "@/components/cart/cart-provider";
 
 interface CustomerInfoStepProps {
   data: CheckoutData;
@@ -20,6 +25,8 @@ export function CustomerInfoStep({
   onNext,
 }: CustomerInfoStepProps) {
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { refreshOrder } = useCart();
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -53,10 +60,37 @@ export function CustomerInfoStep({
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
+    if (!validateForm()) return;
+
+    setIsSubmitting(true);
+    try {
+      // Définir les informations client
+      await setCustomerForOrder({
+        emailAddress: data.customerInfo.email,
+        firstName: data.customerInfo.firstName,
+        lastName: data.customerInfo.lastName,
+        phoneNumber: data.customerInfo.phone,
+      });
+
+      // Définir l'adresse de facturation
+      await setOrderBillingAddress({
+        fullName: `${data.customerInfo.firstName} ${data.customerInfo.lastName}`,
+        streetLine1: data.billingAddress.street,
+        city: data.billingAddress.city,
+        postalCode: data.billingAddress.postalCode,
+        countryCode: "FR",
+        phoneNumber: data.customerInfo.phone,
+      });
+
+      await refreshOrder();
       onNext();
+    } catch (error) {
+      console.error("Error setting customer info:", error);
+      // Afficher une erreur à l'utilisateur
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -297,10 +331,20 @@ export function CustomerInfoStep({
       <div className="flex justify-end pt-6">
         <Button
           type="submit"
+          disabled={isSubmitting}
           className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white px-8 py-3 rounded-lg font-medium transition-all duration-300 hover:shadow-lg transform hover:scale-105"
         >
-          Continuer vers la livraison
-          <ArrowRight className="ml-2 h-4 w-4" />
+          {isSubmitting ? (
+            <div className="flex items-center">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+              Enregistrement...
+            </div>
+          ) : (
+            <>
+              Continuer vers la livraison
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </>
+          )}
         </Button>
       </div>
     </form>

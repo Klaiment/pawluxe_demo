@@ -1,3 +1,5 @@
+"use client";
+
 import { Menu, ShoppingBag, X } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
 import { useEffect, useState } from "react";
@@ -7,13 +9,12 @@ import { Link } from "react-router";
 import { BadgeCustom } from "@/components/ui/badge-custom.tsx";
 
 export const Header = () => {
-  const { cart } = useCart();
+  const { order } = useCart();
   const isMobile = useMobile();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
-  const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
-  console.log("Total items in cart:", totalItems);
+  const totalItems = order?.totalQuantity || 0;
 
   useEffect(() => {
     const handleScroll = () => {

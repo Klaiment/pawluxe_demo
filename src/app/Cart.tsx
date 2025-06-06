@@ -10,19 +10,16 @@ import { CartSummary } from "@/components/cart/cart-summary";
 import { UpsellSection } from "@/components/cart/upsell-section.tsx";
 
 export const Cart = () => {
-  const { cart, updateCartItemQuantity, removeFromCart, addToCart } = useCart();
+  const {
+    cart,
+    updateCartItemQuantity,
+    removeFromCart,
+    addToCart,
+    isLoading,
+  } = useCart();
   const [removingItems, setRemovingItems] = useState<Set<string>>(new Set());
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [isProductsLoaded, setIsProductsLoaded] = useState(false);
-
-  const subtotal = cart.reduce(
-    (total, item) =>
-      total + (item.variantList.items[0].priceWithTax / 100) * item.quantity,
-    0,
-  );
-  const freeShippingThreshold = 50;
-  const shipping = subtotal >= freeShippingThreshold ? 0 : 4.99;
-  const total = subtotal + shipping;
 
   const loadProducts = () => {
     fetchAllProductsFromApi()
@@ -42,17 +39,14 @@ export const Cart = () => {
     loadProducts();
   }, []);
 
-  const cartProductIds = cart.map((item) => item.id);
+  const cartProductIds = cart.map((item) => item.productVariant.product.id);
   const upsellProducts = allProducts
     .filter((product) => !cartProductIds.includes(product.id))
     .filter((product, key) => product.variantList.items[key]?.priceWithTax > 30)
     .slice(0, 4);
 
   const handleQuantityChange = (item: CartItem, newQuantity: number) => {
-    if (
-      newQuantity >= 1 &&
-      newQuantity <= item.variantList.items[0].actualStockLevel
-    ) {
+    if (newQuantity >= 1) {
       updateCartItemQuantity(item.id, newQuantity);
     } else if (newQuantity === 0) {
       handleRemoveItem(item.id);
@@ -71,15 +65,15 @@ export const Cart = () => {
     }, 300);
   };
 
-  const handleAddUpsellProduct = (product: Product) => {
-    addToCart({ ...product, quantity: 1 });
+  const handleAddUpsellProduct = async (product: Product) => {
+    await addToCart(product.variantList.items[0].id, 1);
   };
 
   const handleCheckout = () => {
     window.location.href = "/checkout";
   };
 
-  if (!isProductsLoaded) {
+  if (!isProductsLoaded || isLoading) {
     return <LoadingSpinner />;
   }
 
@@ -98,10 +92,7 @@ export const Cart = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
-          <ShippingProgress
-            subtotal={subtotal}
-            freeShippingThreshold={freeShippingThreshold}
-          />
+          <ShippingProgress />
           <CartItemsList
             items={cart}
             removingItems={removingItems}
@@ -114,14 +105,7 @@ export const Cart = () => {
         </div>
 
         <div className="lg:col-span-1">
-          <CartSummary
-            itemCount={cart.length}
-            subtotal={subtotal}
-            shipping={shipping}
-            total={total}
-            freeShippingThreshold={freeShippingThreshold}
-            onCheckout={handleCheckout}
-          />
+          <CartSummary onCheckout={handleCheckout} />
         </div>
       </div>
     </main>

@@ -1,16 +1,15 @@
 import { Truck, Gift } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { useCart } from "./cart-provider";
 
-interface ShippingProgressProps {
-  subtotal: number;
-  freeShippingThreshold: number;
-}
+export const ShippingProgress = () => {
+  const { order } = useCart();
 
-export const ShippingProgress = ({
-  subtotal,
-  freeShippingThreshold,
-}: ShippingProgressProps) => {
+  if (!order) return null;
+
+  const freeShippingThreshold = 5000; // 50€ en centimes
+  const subtotal = order.subTotalWithTax;
   const remainingForFreeShipping = Math.max(
     0,
     freeShippingThreshold - subtotal,
@@ -34,7 +33,7 @@ export const ShippingProgress = ({
           </Badge>
         ) : (
           <span className="text-sm text-muted-foreground">
-            Plus que {remainingForFreeShipping.toFixed(2)} €
+            Plus que {(remainingForFreeShipping / 100).toFixed(2)} €
           </span>
         )}
       </div>
@@ -47,8 +46,8 @@ export const ShippingProgress = ({
         </p>
       ) : (
         <p className="text-sm text-muted-foreground">
-          Ajoutez {remainingForFreeShipping.toFixed(2)} € pour bénéficier de la
-          livraison gratuite
+          Ajoutez {(remainingForFreeShipping / 100).toFixed(2)} € pour
+          bénéficier de la livraison gratuite
         </p>
       )}
     </div>

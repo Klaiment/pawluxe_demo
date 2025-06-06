@@ -1,3 +1,5 @@
+"use client";
+
 import type React from "react";
 
 import { useState } from "react";
@@ -18,7 +20,7 @@ export function ProductCard({
   product,
   showAddToCart = false,
 }: ProductCardProps) {
-  const { addToCart } = useCart();
+  const { addToCart, isLoading } = useCart();
   const [isHovered, setIsHovered] = useState(false);
   const [isHeartActive, setIsHeartActive] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
@@ -28,11 +30,14 @@ export function ProductCard({
     e.stopPropagation();
 
     setIsAdding(true);
-
-    setTimeout(() => {
-      addToCart({ ...product, quantity: 1 });
+    try {
+      // Utiliser l'ID de la première variante du produit
+      await addToCart(product.variantList.items[0].id, 1);
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+    } finally {
       setIsAdding(false);
-    }, 300);
+    }
   };
 
   const handleHeartClick = (e: React.MouseEvent) => {
@@ -130,15 +135,15 @@ export function ProductCard({
               >
                 <Button
                   className={`w-full text-white shadow-lg border-0 transition-all duration-300 ${
-                    isAdding
+                    isAdding || isLoading
                       ? "bg-green-500 hover:bg-green-600 scale-95"
                       : "bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700"
                   }`}
                   size="sm"
                   onClick={handleAddToCart}
-                  disabled={isAdding}
+                  disabled={isAdding || isLoading}
                 >
-                  {isAdding ? (
+                  {isAdding || isLoading ? (
                     <motion.div
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}

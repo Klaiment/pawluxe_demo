@@ -1,6 +1,7 @@
+"use client";
+
 import { Trash2, Minus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/format-currency";
 import type { CartItem } from "@/lib/types";
 
@@ -23,8 +24,11 @@ export const CartItemComponent = ({
         <div className="col-span-1 md:col-span-2">
           <div className="aspect-square overflow-hidden rounded-md border border-amber-100 relative group">
             <img
-              src={item.featuredAsset.preview || "/placeholder.svg"}
-              alt={item.name}
+              src={
+                item.productVariant.product.featuredAsset.preview ||
+                "/placeholder.svg"
+              }
+              alt={item.productVariant.product.name}
               className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
           </div>
@@ -32,26 +36,12 @@ export const CartItemComponent = ({
 
         <div className="col-span-1 md:col-span-4">
           <h3 className="font-medium hover:text-amber-700 transition-colors">
-            {item.name}
+            {item.productVariant.product.name}
           </h3>
           <p className="text-sm text-muted-foreground mt-1">
-            {item.facetValues.map(
-              (facetValue, index) =>
-                facetValue.name &&
-                facetValue.name !== "top" &&
-                !facetValue.name.startsWith("carac_") && (
-                  <span key={index}>{facetValue.name}</span>
-                ),
-            )}
+            {item.productVariant.name}
           </p>
-          {item.variantList.items[0].actualStockLevel < 5 && (
-            <Badge
-              variant="outline"
-              className="mt-2 border-orange-200 text-orange-700"
-            >
-              Plus que {item.variantList.items[0].actualStockLevel} en stock
-            </Badge>
-          )}
+          {/* Note: Stock level info would need to be added to the CartItem type */}
         </div>
 
         <div className="col-span-1 md:col-span-2 text-left md:text-center">
@@ -59,7 +49,7 @@ export const CartItemComponent = ({
             Prix
           </div>
           <span className="font-medium">
-            {formatCurrency(item.variantList.items[0].priceWithTax, "€")}
+            {formatCurrency(item.productVariant.priceWithTax, "€")}
           </span>
         </div>
 
@@ -88,9 +78,6 @@ export const CartItemComponent = ({
               size="icon"
               className="h-8 w-8 rounded-none hover:bg-amber-50"
               onClick={() => onQuantityChange(item, item.quantity + 1)}
-              disabled={
-                item.quantity >= item.variantList.items[0].actualStockLevel
-              }
             >
               <Plus className="h-3 w-3" />
             </Button>
@@ -102,10 +89,7 @@ export const CartItemComponent = ({
             Total
           </div>
           <span className="font-semibold text-amber-800">
-            {formatCurrency(
-              item.variantList.items[0].priceWithTax * item.quantity,
-              "€",
-            )}
+            {formatCurrency(item.linePriceWithTax, "€")}
           </span>
         </div>
       </div>
