@@ -1,5 +1,3 @@
-"use client";
-
 import type React from "react";
 
 import { useState } from "react";
@@ -8,7 +6,7 @@ import type { Product } from "@/lib/types";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Star, Heart, ShoppingBag, Eye, ArrowRight } from "lucide-react";
+import { Star, Heart, ShoppingBag, Eye } from "lucide-react";
 import { useCart } from "@/components/cart/cart-provider";
 
 interface ProductCardProps {
