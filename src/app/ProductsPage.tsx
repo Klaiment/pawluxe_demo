@@ -267,42 +267,44 @@ export default function ProductsPage() {
       <section className="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 py-12">
         <div className="container mx-auto px-4 md:px-6">
           <div className="mb-8 sticky top-16 z-30 bg-white/80 backdrop-blur-md shadow-sm rounded-xl p-4 border border-amber-100">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  onClick={() => setIsFilterOpen(!isFilterOpen)}
-                  className="border-amber-200 text-amber-700 hover:bg-amber-50"
-                >
-                  <Filter className="mr-2 h-4 w-4" />
-                  Filtres
-                  <Badge className="ml-2 bg-amber-600 text-white">
-                    {getActiveFiltersCount()}
-                  </Badge>
-                </Button>
-
-                {getActiveFiltersCount() > 0 && (
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full md:w-auto">
+                <div className="flex items-center gap-2 w-full sm:w-auto">
                   <Button
-                    variant="ghost"
-                    onClick={resetFilters}
-                    className="text-amber-700 hover:bg-amber-50"
+                      variant="outline"
+                      onClick={() => setIsFilterOpen(!isFilterOpen)}
+                      className="border-amber-200 text-amber-700 hover:bg-amber-50 w-full sm:w-auto"
                   >
-                    <X className="mr-2 h-4 w-4" />
-                    Réinitialiser
+                    <Filter className="mr-2 h-4 w-4" />
+                    Filtres
+                    <Badge className="ml-2 bg-amber-600 text-white">
+                      {getActiveFiltersCount()}
+                    </Badge>
                   </Button>
-                )}
+
+                  {getActiveFiltersCount() > 0 && (
+                      <Button
+                          variant="ghost"
+                          onClick={resetFilters}
+                          className="text-amber-700 hover:bg-amber-50 w-full sm:w-auto"
+                      >
+                        <X className="mr-2 h-4 w-4" />
+                        Réinitialiser
+                      </Button>
+                  )}
+                </div>
               </div>
 
-              <div className="flex items-center gap-4 w-full md:w-auto">
-                <div className="text-sm text-muted-foreground">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full md:w-auto">
+                <div className="text-sm text-muted-foreground w-full sm:w-auto">
                   {products.length} produit{products.length !== 1 ? "s" : ""}
                 </div>
 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
-                      variant="outline"
-                      className="w-full md:w-auto justify-between border-amber-200 text-amber-700 hover:bg-amber-50"
+                        variant="outline"
+                        className="w-full sm:w-auto justify-between border-amber-200 text-amber-700 hover:bg-amber-50"
                     >
                       <ArrowUpDown className="mr-2 h-4 w-4" />
                       {sortOption === "featured" && "En vedette"}
@@ -314,34 +316,29 @@ export default function ProductsPage() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
-                    align="end"
-                    className="bg-white/90 backdrop-blur-sm border-amber-100"
+                      align="end"
+                      className="bg-white/90 backdrop-blur-sm border-amber-100"
                   >
                     <DropdownMenuItem onClick={() => setSortOption("featured")}>
                       En vedette
                     </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => setSortOption("price-asc")}
-                    >
+                    <DropdownMenuItem onClick={() => setSortOption("price-asc")}>
                       Prix croissant
                     </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => setSortOption("price-desc")}
-                    >
+                    <DropdownMenuItem onClick={() => setSortOption("price-desc")}>
                       Prix décroissant
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => setSortOption("name-asc")}>
                       A-Z
                     </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => setSortOption("name-desc")}
-                    >
+                    <DropdownMenuItem onClick={() => setSortOption("name-desc")}>
                       Z-A
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
             </div>
+
 
             <AnimatePresence>
               {isFilterOpen && (
