@@ -145,18 +145,18 @@ export function OrderReviewStep({
             >
               <img
                 src={item.productVariant.product.featuredAsset.preview || "/placeholder.svg"}
-                alt={item.name}
+                alt={item.productVariant.name}
                 className="w-12 h-12 object-cover rounded"
               />
               <div className="flex-1">
-                <p className="font-medium">{item.name}</p>
+                <p className="font-medium">{item.productVariant.name}</p>
                 <p className="text-sm text-muted-foreground">
                   Quantité: {item.quantity}
                 </p>
               </div>
               <p className="font-medium">
                 {(
-                  (item.variantList.items[0].priceWithTax / 100) *
+                  (item.productVariant.priceWithTax / 100) *
                   item.quantity
                 ).toFixed(2)}{" "}
                 €
