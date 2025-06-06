@@ -3,9 +3,7 @@ import { Badge } from "@/components/ui/badge.tsx";
 import { ChevronRight, Star } from "lucide-react";
 import { Button } from "../ui/button";
 import { Link } from "react-router-dom";
-import {
-  fetchAllProductsFromApi,
-} from "@/services/productService.ts";
+import { fetchAllProductsFromApi } from "@/services/productService.ts";
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { FeaturedProducts } from "./featured-products";

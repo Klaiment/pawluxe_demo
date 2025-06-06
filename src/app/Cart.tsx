@@ -27,7 +27,8 @@ export const Cart = () => {
   const loadProducts = () => {
     fetchAllProductsFromApi()
       .then((products) => {
-        const items = ((products as { products: { items: Product[] } }).products).items;
+        const items = (products as { products: { items: Product[] } }).products
+          .items;
         setAllProducts(items);
         setIsProductsLoaded(true);
       })

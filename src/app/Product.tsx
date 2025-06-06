@@ -40,15 +40,17 @@ export const Product: React.FC = () => {
   }
 
   return (
-      <main className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
-        <Breadcrumb productName={product?.name} />
-        <div className="container mx-auto px-4 md:px-6 py-8">
-          {product ? (
-              <ProductSection productDetails={product} />
-          ) : (
-              <div className="text-center text-sm text-gray-500">Chargement du produit...</div>
-          )}
-        </div>
-      </main>
+    <main className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
+      <Breadcrumb productName={product?.name} />
+      <div className="container mx-auto px-4 md:px-6 py-8">
+        {product ? (
+          <ProductSection productDetails={product} />
+        ) : (
+          <div className="text-center text-sm text-gray-500">
+            Chargement du produit...
+          </div>
+        )}
+      </div>
+    </main>
   );
 };

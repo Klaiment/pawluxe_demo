@@ -141,23 +141,25 @@ export const ProductSection = ({
 
         {/* Thumbnail Images */}
         <div className="grid grid-cols-4 gap-3">
-          {productDetails.assets?.map((image: { preview: string }, index: number) => (
+          {productDetails.assets?.map(
+            (image: { preview: string }, index: number) => (
               <button
-              key={index}
-              onClick={() => setCurrentImageIndex(index)}
-              className={`aspect-square rounded-lg overflow-hidden border-2 transition-all duration-300 ${
-                currentImageIndex === index
-                  ? "border-amber-500 shadow-lg scale-105"
-                  : "border-amber-200 hover:border-amber-400"
-              }`}
-            >
-              <img
-                src={image.preview || "/placeholder.svg"}
-                alt={`Vue ${index + 1}`}
-                className="w-full h-full object-cover"
-              />
-            </button>
-          ))}
+                key={index}
+                onClick={() => setCurrentImageIndex(index)}
+                className={`aspect-square rounded-lg overflow-hidden border-2 transition-all duration-300 ${
+                  currentImageIndex === index
+                    ? "border-amber-500 shadow-lg scale-105"
+                    : "border-amber-200 hover:border-amber-400"
+                }`}
+              >
+                <img
+                  src={image.preview || "/placeholder.svg"}
+                  alt={`Vue ${index + 1}`}
+                  className="w-full h-full object-cover"
+                />
+              </button>
+            ),
+          )}
         </div>
       </motion.div>
 
