@@ -40,3 +40,26 @@ export interface ProductResponse {
   totalItems: number;
   items: Product[];
 }
+
+export interface CustomerInfo {
+  firstName: string
+  lastName: string
+  email: string
+  phone: string
+}
+
+export interface Address {
+  street: string
+  city: string
+  postalCode: string
+  country: string
+}
+
+export interface CheckoutData {
+  customerInfo: CustomerInfo
+  billingAddress: Address
+  shippingAddress: Address
+  sameAsBilling: boolean
+  shippingMethod: string
+  paymentMethod: string
+}

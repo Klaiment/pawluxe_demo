@@ -9,6 +9,8 @@ import { Product } from "@/app/Product.tsx";
 import ProductsPage from "@/app/ProductsPage.tsx";
 import { Toaster } from "sonner";
 import { CartProvider } from "@/components/cart/cart-provider.tsx";
+import { Checkout } from "./app/Checkout.tsx";
+import {CheckoutSuccessPage} from "@/app/Success.tsx";
 
 function App() {
   return (
@@ -28,6 +30,8 @@ function App() {
             <Route path="/products" element={<ProductsPage />} />
             <Route path="/product/:slug" element={<Product />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/checkout/success" element={<CheckoutSuccessPage />} />
           </Routes>
         </div>
         <Footer />
