@@ -5,7 +5,6 @@ import { Button } from "../ui/button";
 import { Link } from "react-router-dom";
 import {
   fetchAllProductsFromApi,
-  fetchTopProductsFromApi,
 } from "@/services/productService.ts";
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
@@ -13,7 +12,7 @@ import { FeaturedProducts } from "./featured-products";
 import type { Product } from "@/lib/types.ts";
 
 export const ProductSectionHomePage = () => {
-  const [featuredProducts, setFeaturedProducts] = useState(null);
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [featuredRef, featuredInView] = useInView({
     threshold: 0.1,
     triggerOnce: true,
