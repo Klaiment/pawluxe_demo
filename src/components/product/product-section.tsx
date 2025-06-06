@@ -21,7 +21,6 @@ import { useState } from "react";
 import type { Product } from "@/lib/types";
 import { formatCurrency } from "@/lib/format-currency.ts";
 import { useCart } from "@/components/cart/cart-provider.tsx";
-import { successAddToBasket } from "@/components/cart/toast.tsx";
 
 export const ProductSection = ({
   productDetails,
@@ -38,7 +37,7 @@ export const ProductSection = ({
   const handleAddToCart = () => {
     if (productDetails) {
       addToCart({ ...productDetails, quantity });
-      successAddToBasket({ productDetails, quantity });
+      // successAddToBasket({ productDetails, quantity });
     }
   };
   const decreaseQuantity = () => {

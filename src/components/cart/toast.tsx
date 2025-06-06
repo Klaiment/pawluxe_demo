@@ -9,7 +9,6 @@ export const successAddToBasket = ({
   productDetails: Product;
   quantity: number;
 }) => {
-  console.log("Success: Item added to basket", productDetails);
   return toast.success("Ajouté au panier !", {
     description: (
       <div className="flex items-center gap-3 mt-2">
