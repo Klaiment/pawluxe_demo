@@ -14,10 +14,8 @@ import type { Product } from "@/lib/types.ts";
 
 export const ProductSectionHomePage = () => {
   const [featuredProducts, setFeaturedProducts] = useState(null);
-  const [featuredRef, featuredInView] = useInView({
-    threshold: 0.1,
-    triggerOnce: true,
-  });
+  const [featuredRef, featuredInView] = useInView({ threshold: 0.1, triggerOnce: true })
+
 
   useEffect(() => {
     const fetchFeaturedProducts = async () => {
@@ -53,6 +51,7 @@ export const ProductSectionHomePage = () => {
       <div className="container mx-auto px-4 md:px-6 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
+          ref={featuredRef}
           animate={
             featuredInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }
           }

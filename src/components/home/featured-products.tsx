@@ -3,20 +3,20 @@ import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/product/product-card.tsx";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 
 export function FeaturedProducts({ featuredProducts }) {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const nextSlide = () => {
     setActiveIndex(
-      (prev) => (prev + 1) % Math.ceil(featuredProducts.length / 4),
+      (prev) => (prev + 1) % Math.ceil(featuredProducts?.length / 4),
     );
   };
 
   const prevSlide = () => {
     setActiveIndex((prev) =>
-      prev === 0 ? Math.ceil(featuredProducts.length / 4) - 1 : prev - 1,
+      prev === 0 ? Math.ceil(featuredProducts?.length / 4) - 1 : prev - 1,
     );
   };
 
@@ -65,7 +65,7 @@ export function FeaturedProducts({ featuredProducts }) {
           className="flex transition-all duration-500 ease-in-out"
           style={{ transform: `translateX(-${activeIndex * 100}%)` }}
         >
-          {Array.from({ length: Math.ceil(featuredProducts.length / 4) }).map(
+          {Array.from({ length: Math.ceil((featuredProducts?.length || 0) / 4) }).map(
             (_, pageIndex) => (
               <div key={pageIndex} className="min-w-full">
                 <motion.div
@@ -95,7 +95,7 @@ export function FeaturedProducts({ featuredProducts }) {
 
       {/* Indicators */}
       <div className="flex justify-center space-x-2 mt-8">
-        {Array.from({ length: Math.ceil(featuredProducts.length / 4) }).map(
+        {Array.from({ length: Math.ceil(featuredProducts?.length / 4) }).map(
           (_, index) => (
             <button
               key={index}
