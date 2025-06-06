@@ -144,7 +144,10 @@ export function OrderReviewStep({
               className="flex items-center space-x-3 p-3 border rounded-lg"
             >
               <img
-                src={item.productVariant.product.featuredAsset.preview || "/placeholder.svg"}
+                src={
+                  item.productVariant.product.featuredAsset.preview ||
+                  "/placeholder.svg"
+                }
                 alt={item.productVariant.name}
                 className="w-12 h-12 object-cover rounded"
               />

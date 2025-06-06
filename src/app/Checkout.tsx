@@ -361,7 +361,8 @@ export const Checkout = () => {
                           <div className="relative">
                             <img
                               src={
-                                  item.productVariant.product.featuredAsset.preview || "/placeholder.svg"
+                                item.productVariant.product.featuredAsset
+                                  .preview || "/placeholder.svg"
                               }
                               alt={item.productVariant.name}
                               className="w-12 h-12 object-cover rounded border border-amber-200"
@@ -374,7 +375,6 @@ export const Checkout = () => {
                             <p className="text-sm font-medium truncate">
                               {item.productVariant.name}
                             </p>
-
                           </div>
                           <p className="text-sm font-semibold text-amber-800">
                             {(

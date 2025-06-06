@@ -1,10 +1,10 @@
-import { gql, GraphQLClient } from "graphql-request"
+import { gql, GraphQLClient } from "graphql-request";
 
 // Utiliser le même client pour maintenir la session
 const client = new GraphQLClient("http://localhost:3000/shop-api", {
   credentials: "include",
   mode: "cors",
-})
+});
 
 export async function fetchAllProductsFromApi() {
   const document = gql`
@@ -46,9 +46,9 @@ export async function fetchAllProductsFromApi() {
         }
       }
     }
-  `
+  `;
 
-  return await client.request(document)
+  return await client.request(document);
 }
 
 export function getProductDetails(slug: string) {
@@ -88,9 +88,9 @@ export function getProductDetails(slug: string) {
         }
       }
     }
-  `
+  `;
 
-  return client.request(document, { slug })
+  return client.request(document, { slug });
 }
 
 export async function fetchTopProductsFromApi() {
@@ -132,7 +132,7 @@ export async function fetchTopProductsFromApi() {
         }
       }
     }
-  `
+  `;
 
-  return await client.request(document)
+  return await client.request(document);
 }
