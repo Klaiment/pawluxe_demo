@@ -76,7 +76,7 @@ export const Checkout = () => {
 
   const subtotal = cart.reduce(
     (total, item) =>
-      total + (item.variantList.items[0].priceWithTax / 100) * item.quantity,
+      total + (item.productVariant.priceWithTax / 100) * item.quantity,
     0,
   );
   const shippingCost =
@@ -361,9 +361,9 @@ export const Checkout = () => {
                           <div className="relative">
                             <img
                               src={
-                                item.featuredAsset.preview || "/placeholder.svg"
+                                  item.productVariant.product.featuredAsset.preview || "/placeholder.svg"
                               }
-                              alt={item.name}
+                              alt={item.productVariant.name}
                               className="w-12 h-12 object-cover rounded border border-amber-200"
                             />
                             <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 bg-amber-600 text-xs">
@@ -372,23 +372,13 @@ export const Checkout = () => {
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium truncate">
-                              {item.name}
+                              {item.productVariant.name}
                             </p>
-                            <p className="text-xs text-muted-foreground">
-                              {item.facetValues
-                                .filter(
-                                  (facet) =>
-                                    !facet.name.includes("carac_") &&
-                                    facet.name !== "top",
-                                )
-                                .map((facet) => (
-                                  <span key={facet.id}>{facet.name}</span>
-                                ))}
-                            </p>
+
                           </div>
                           <p className="text-sm font-semibold text-amber-800">
                             {(
-                              (item.variantList.items[0].priceWithTax / 100) *
+                              (item.productVariant.priceWithTax / 100) *
                               item.quantity
                             ).toFixed(2)}{" "}
                             €

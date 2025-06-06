@@ -1,65 +1,68 @@
-import { gql, request } from "graphql-request";
+import { gql, GraphQLClient } from "graphql-request"
 
-const API_URL = "http://localhost:3000/shop-api";
+const API_URL = "http://localhost:3000/shop-api"
 
-// Types pour les commandes
+const client = new GraphQLClient(API_URL, {
+  credentials: "include",
+  mode: "cors",
+})
+
 export interface OrderLine {
-  id: string;
+  id: string
   productVariant: {
-    id: string;
-    name: string;
-    price: number;
-    priceWithTax: number;
+    id: string
+    name: string
+    price: number
+    priceWithTax: number
     product: {
-      id: string;
-      name: string;
-      slug: string;
+      id: string
+      name: string
+      slug: string
       featuredAsset: {
-        id: string;
-        preview: string;
-      };
-    };
-  };
-  quantity: number;
-  linePrice: number;
-  linePriceWithTax: number;
+        id: string
+        preview: string
+      }
+    }
+  }
+  quantity: number
+  linePrice: number
+  linePriceWithTax: number
 }
 
 export interface Order {
-  id: string;
-  code: string;
-  state: string;
-  total: number;
-  totalWithTax: number;
-  totalQuantity: number;
-  subTotal: number;
-  subTotalWithTax: number;
-  shipping: number;
-  shippingWithTax: number;
-  lines: OrderLine[];
+  id: string
+  code: string
+  state: string
+  total: number
+  totalWithTax: number
+  totalQuantity: number
+  subTotal: number
+  subTotalWithTax: number
+  shipping: number
+  shippingWithTax: number
+  lines: OrderLine[]
   shippingAddress?: {
-    fullName: string;
-    streetLine1: string;
-    city: string;
-    postalCode: string;
-    country: string;
-  };
+    fullName: string
+    streetLine1: string
+    city: string
+    postalCode: string
+    country: string
+  }
   billingAddress?: {
-    fullName: string;
-    streetLine1: string;
-    city: string;
-    postalCode: string;
-    country: string;
-  };
+    fullName: string
+    streetLine1: string
+    city: string
+    postalCode: string
+    country: string
+  }
   customer?: {
-    firstName: string;
-    lastName: string;
-    emailAddress: string;
-    phoneNumber: string;
-  };
+    firstName: string
+    lastName: string
+    emailAddress: string
+    phoneNumber: string
+  }
 }
 
-// Récupérer la commande active
 export async function getActiveOrder(): Promise<Order | null> {
   const document = gql`
     query GetActiveOrder {
@@ -117,22 +120,21 @@ export async function getActiveOrder(): Promise<Order | null> {
         }
       }
     }
-  `;
+  `
 
   try {
-    const response = await request(API_URL, document);
-    return response.activeOrder;
+    console.log("🔍 Fetching active order...")
+    const response = await client.request(document)
+    console.log("📦 Active order response:", response.activeOrder)
+    return response.activeOrder
   } catch (error) {
-    console.error("Error fetching active order:", error);
-    return null;
+    console.error("❌ Error fetching active order:", error)
+    return null
   }
 }
 
 // Ajouter un produit au panier
-export async function addItemToOrder(
-  productVariantId: string,
-  quantity: number,
-): Promise<Order> {
+export async function addItemToOrder(productVariantId: string, quantity: number): Promise<Order> {
   const document = gql`
     mutation AddItemToOrder($productVariantId: ID!, $quantity: Int!) {
       addItemToOrder(productVariantId: $productVariantId, quantity: $quantity) {
@@ -173,25 +175,25 @@ export async function addItemToOrder(
         }
       }
     }
-  `;
+  `
 
-  const response = await request(API_URL, document, {
+  console.log("➕ Adding item to order:", { productVariantId, quantity })
+  const response = await client.request(document, {
     productVariantId,
     quantity,
-  });
+  })
 
   if (response.addItemToOrder.errorCode) {
-    throw new Error(response.addItemToOrder.message);
+    console.error("❌ Error in addItemToOrder:", response.addItemToOrder)
+    throw new Error(response.addItemToOrder.message)
   }
 
-  return response.addItemToOrder;
+  console.log("✅ Item added successfully:", response.addItemToOrder)
+  return response.addItemToOrder
 }
 
 // Ajuster la quantité d'une ligne de commande
-export async function adjustOrderLine(
-  orderLineId: string,
-  quantity: number,
-): Promise<Order> {
+export async function adjustOrderLine(orderLineId: string, quantity: number): Promise<Order> {
   const document = gql`
     mutation AdjustOrderLine($orderLineId: ID!, $quantity: Int!) {
       adjustOrderLine(orderLineId: $orderLineId, quantity: $quantity) {
@@ -232,18 +234,21 @@ export async function adjustOrderLine(
         }
       }
     }
-  `;
+  `
 
-  const response = await request(API_URL, document, {
+  console.log("🔄 Adjusting order line:", { orderLineId, quantity })
+  const response = await client.request(document, {
     orderLineId,
     quantity,
-  });
+  })
 
   if (response.adjustOrderLine.errorCode) {
-    throw new Error(response.adjustOrderLine.message);
+    console.error("❌ Error in adjustOrderLine:", response.adjustOrderLine)
+    throw new Error(response.adjustOrderLine.message)
   }
 
-  return response.adjustOrderLine;
+  console.log("✅ Order line adjusted successfully:", response.adjustOrderLine)
+  return response.adjustOrderLine
 }
 
 // Supprimer une ligne de commande
@@ -288,27 +293,30 @@ export async function removeOrderLine(orderLineId: string): Promise<Order> {
         }
       }
     }
-  `;
+  `
 
-  const response = await request(API_URL, document, {
+  console.log("🗑️ Removing order line:", { orderLineId })
+  const response = await client.request(document, {
     orderLineId,
-  });
+  })
 
   if (response.removeOrderLine.errorCode) {
-    throw new Error(response.removeOrderLine.message);
+    console.error("❌ Error in removeOrderLine:", response.removeOrderLine)
+    throw new Error(response.removeOrderLine.message)
   }
 
-  return response.removeOrderLine;
+  console.log("✅ Order line removed successfully:", response.removeOrderLine)
+  return response.removeOrderLine
 }
 
 // Définir l'adresse de livraison
 export async function setOrderShippingAddress(input: {
-  fullName: string;
-  streetLine1: string;
-  city: string;
-  postalCode: string;
-  countryCode: string;
-  phoneNumber?: string;
+  fullName: string
+  streetLine1: string
+  city: string
+  postalCode: string
+  countryCode: string
+  phoneNumber?: string
 }): Promise<Order> {
   const document = gql`
     mutation SetOrderShippingAddress($input: CreateAddressInput!) {
@@ -330,25 +338,25 @@ export async function setOrderShippingAddress(input: {
         }
       }
     }
-  `;
+  `
 
-  const response = await request(API_URL, document, { input });
+  const response = await client.request(document, { input })
 
   if (response.setOrderShippingAddress.errorCode) {
-    throw new Error(response.setOrderShippingAddress.message);
+    throw new Error(response.setOrderShippingAddress.message)
   }
 
-  return response.setOrderShippingAddress;
+  return response.setOrderShippingAddress
 }
 
 // Définir l'adresse de facturation
 export async function setOrderBillingAddress(input: {
-  fullName: string;
-  streetLine1: string;
-  city: string;
-  postalCode: string;
-  countryCode: string;
-  phoneNumber?: string;
+  fullName: string
+  streetLine1: string
+  city: string
+  postalCode: string
+  countryCode: string
+  phoneNumber?: string
 }): Promise<Order> {
   const document = gql`
     mutation SetOrderBillingAddress($input: CreateAddressInput!) {
@@ -370,15 +378,15 @@ export async function setOrderBillingAddress(input: {
         }
       }
     }
-  `;
+  `
 
-  const response = await request(API_URL, document, { input });
+  const response = await client.request(document, { input })
 
   if (response.setOrderBillingAddress.errorCode) {
-    throw new Error(response.setOrderBillingAddress.message);
+    throw new Error(response.setOrderBillingAddress.message)
   }
 
-  return response.setOrderBillingAddress;
+  return response.setOrderBillingAddress
 }
 
 // Obtenir les méthodes de livraison disponibles
@@ -393,16 +401,14 @@ export async function getShippingMethods() {
         priceWithTax
       }
     }
-  `;
+  `
 
-  const response = await request(API_URL, document);
-  return response.eligibleShippingMethods;
+  const response = await client.request(document)
+  return response.eligibleShippingMethods
 }
 
 // Définir la méthode de livraison
-export async function setOrderShippingMethod(
-  shippingMethodId: string,
-): Promise<Order> {
+export async function setOrderShippingMethod(shippingMethodId: string): Promise<Order> {
   const document = gql`
     mutation SetOrderShippingMethod($shippingMethodId: ID!) {
       setOrderShippingMethod(shippingMethodId: $shippingMethodId) {
@@ -419,15 +425,15 @@ export async function setOrderShippingMethod(
         }
       }
     }
-  `;
+  `
 
-  const response = await request(API_URL, document, { shippingMethodId });
+  const response = await client.request(document, { shippingMethodId })
 
   if (response.setOrderShippingMethod.errorCode) {
-    throw new Error(response.setOrderShippingMethod.message);
+    throw new Error(response.setOrderShippingMethod.message)
   }
 
-  return response.setOrderShippingMethod;
+  return response.setOrderShippingMethod
 }
 
 // Obtenir les méthodes de paiement disponibles
@@ -441,10 +447,10 @@ export async function getPaymentMethods() {
         isEligible
       }
     }
-  `;
+  `
 
-  const response = await request(API_URL, document);
-  return response.eligiblePaymentMethods;
+  const response = await client.request(document)
+  return response.eligiblePaymentMethods
 }
 
 // Transition vers l'état ArrangingPayment
@@ -465,21 +471,21 @@ export async function transitionOrderToState(state: string): Promise<Order> {
         }
       }
     }
-  `;
+  `
 
-  const response = await request(API_URL, document, { state });
+  const response = await client.request(document, { state })
 
   if (response.transitionOrderToState.errorCode) {
-    throw new Error(response.transitionOrderToState.message);
+    throw new Error(response.transitionOrderToState.message)
   }
 
-  return response.transitionOrderToState;
+  return response.transitionOrderToState
 }
 
 // Ajouter un paiement à la commande
 export async function addPaymentToOrder(input: {
-  method: string;
-  metadata: any;
+  method: string
+  metadata: any
 }): Promise<Order> {
   const document = gql`
     mutation AddPaymentToOrder($input: PaymentInput!) {
@@ -500,23 +506,23 @@ export async function addPaymentToOrder(input: {
         }
       }
     }
-  `;
+  `
 
-  const response = await request(API_URL, document, { input });
+  const response = await client.request(document, { input })
 
   if (response.addPaymentToOrder.errorCode) {
-    throw new Error(response.addPaymentToOrder.message);
+    throw new Error(response.addPaymentToOrder.message)
   }
 
-  return response.addPaymentToOrder;
+  return response.addPaymentToOrder
 }
 
 // Définir les informations client
 export async function setCustomerForOrder(input: {
-  emailAddress: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber?: string;
+  emailAddress: string
+  firstName: string
+  lastName: string
+  phoneNumber?: string
 }): Promise<Order> {
   const document = gql`
     mutation SetCustomerForOrder($input: CreateCustomerInput!) {
@@ -536,13 +542,13 @@ export async function setCustomerForOrder(input: {
         }
       }
     }
-  `;
+  `
 
-  const response = await request(API_URL, document, { input });
+  const response = await client.request(document, { input })
 
   if (response.setCustomerForOrder.errorCode) {
-    throw new Error(response.setCustomerForOrder.message);
+    throw new Error(response.setCustomerForOrder.message)
   }
 
-  return response.setCustomerForOrder;
+  return response.setCustomerForOrder
 }
