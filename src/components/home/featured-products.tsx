@@ -4,8 +4,9 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/product/product-card.tsx";
 import { Link } from "react-router-dom";
+import type {Product} from "@/lib/types.ts";
 
-export function FeaturedProducts({ featuredProducts }) {
+export function FeaturedProducts({ featuredProducts }: { featuredProducts: Product[] }) {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const nextSlide = () => {

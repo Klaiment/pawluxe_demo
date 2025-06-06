@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button.tsx";
 import { ArrowLeft } from "lucide-react";
 
-export const Breadcrumb = ({ productName }: { productName: string }) => {
+export const Breadcrumb = ({ productName }: { productName?: string }) => {
   return (
     <div className="bg-white/80 backdrop-blur-md border-b border-amber-100 sticky top-0 z-40">
       <div className="container mx-auto px-4 md:px-6 py-4">

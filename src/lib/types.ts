@@ -18,7 +18,7 @@ export interface Product {
     id: string;
     name: string;
     preview: string;
-  };
+  }[];
   variantList: {
     items: {
       id: string;

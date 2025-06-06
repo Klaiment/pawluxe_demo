@@ -141,8 +141,8 @@ export const ProductSection = ({
 
         {/* Thumbnail Images */}
         <div className="grid grid-cols-4 gap-3">
-          {productDetails.assets.map((image, index) => (
-            <button
+          {productDetails.assets?.map((image: { preview: string }, index: number) => (
+              <button
               key={index}
               onClick={() => setCurrentImageIndex(index)}
               className={`aspect-square rounded-lg overflow-hidden border-2 transition-all duration-300 ${
