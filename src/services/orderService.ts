@@ -2,11 +2,13 @@ import { gql, GraphQLClient } from "graphql-request"
 
 const API_URL = "http://localhost:3000/shop-api"
 
+// Créer un client GraphQL avec gestion des cookies
 const client = new GraphQLClient(API_URL, {
-  credentials: "include",
+  credentials: "include", // Important pour maintenir la session
   mode: "cors",
 })
 
+// Types pour les commandes
 export interface OrderLine {
   id: string
   productVariant: {
@@ -63,6 +65,17 @@ export interface Order {
   }
 }
 
+// Fonction utilitaire pour récupérer la commande active (version simplifiée)
+export async function getCurrentOrder(): Promise<Order | null> {
+  try {
+    return await getActiveOrder()
+  } catch (error) {
+    console.error("Error getting current order:", error)
+    return null
+  }
+}
+
+// Récupérer la commande active
 export async function getActiveOrder(): Promise<Order | null> {
   const document = gql`
     query GetActiveOrder {
