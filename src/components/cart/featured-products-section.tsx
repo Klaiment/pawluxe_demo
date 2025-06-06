@@ -3,6 +3,7 @@ import { Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router";
 import type { Product } from "@/lib/types";
+import { ProductCard } from "@/components/product/product-card.tsx";
 
 interface FeaturedProductsSectionProps {
   products: Product[];
@@ -52,10 +53,10 @@ export const FeaturedProductsSection = ({
               transition={{ duration: 0.6, delay: 0.6 + index * 0.1 }}
             >
               <Link
-                to={`/products/${product.id}`}
+                to={`/product/${product.slug}`}
                 className="group block h-full"
               >
-                {/* ProductCard component would go here */}
+                <ProductCard product={product} showAddToCart={true} />
               </Link>
             </motion.div>
           ))}
