@@ -10,7 +10,7 @@ import ProductsPage from "@/app/ProductsPage.tsx";
 import { Toaster } from "sonner";
 import { CartProvider } from "@/components/cart/cart-provider.tsx";
 import { Checkout } from "./app/Checkout.tsx";
-import {CheckoutSuccessPage} from "@/app/Success.tsx";
+import { CheckoutSuccessPage } from "@/app/Success.tsx";
 
 function App() {
   return (
