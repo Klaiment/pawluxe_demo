@@ -2,20 +2,20 @@ import * as React from "react";
 import { useParams } from "react-router-dom";
 import { getProductDetails } from "@/services/productService.ts";
 import { useEffect } from "react";
-import type { Product } from "@/lib/types.ts";
+import type { Product as ProductType } from "@/lib/types.ts";
 import { Breadcrumb } from "@/components/layout/breadcrumb.tsx";
 import { ProductSection } from "@/components/product/product-section.tsx";
 
 export const Product: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
-  const [product, setProduct] = React.useState<Product | null>(null);
+  const [product, setProduct] = React.useState<ProductType | null>(null);
   if (!slug) {
     return <div>Error: Product slug is missing.</div>;
   }
   useEffect(() => {
     const fetchProductDetails = async () => {
       const productDetails = await getProductDetails(slug);
-      setProduct(productDetails.product);
+      setProduct((productDetails as { product: ProductType }).product);
       console.log("Product Details:", productDetails);
     };
     fetchProductDetails();
