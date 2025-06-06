@@ -1,55 +1,61 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/ui/checkbox"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { ArrowLeft, ArrowRight, Truck, Zap } from "lucide-react"
-import type { CheckoutData } from "@/lib/types"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { ArrowLeft, ArrowRight, Truck, Zap } from "lucide-react";
+import type { CheckoutData } from "@/lib/types";
 
 interface ShippingStepProps {
-  data: CheckoutData
-  onUpdate: (data: Partial<CheckoutData>) => void
-  onNext: () => void
-  onPrev: () => void
-  subtotal: number
+  data: CheckoutData;
+  onUpdate: (data: Partial<CheckoutData>) => void;
+  onNext: () => void;
+  onPrev: () => void;
+  subtotal: number;
 }
 
-export function ShippingStep({ data, onUpdate, onNext, onPrev, subtotal }: ShippingStepProps) {
-  const [errors, setErrors] = useState<Record<string, string>>({})
+export function ShippingStep({
+  data,
+  onUpdate,
+  onNext,
+  onPrev,
+  subtotal,
+}: ShippingStepProps) {
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const validateForm = () => {
     if (data.sameAsBilling) {
       // Correction ici: sameAsBilling au lieu de sameAsBinding
-      return true
+      return true;
     }
 
-    const newErrors: Record<string, string> = {}
+    const newErrors: Record<string, string> = {};
 
     if (!data.shippingAddress.street.trim()) {
-      newErrors.shippingStreet = "L'adresse de livraison est requise"
+      newErrors.shippingStreet = "L'adresse de livraison est requise";
     }
     if (!data.shippingAddress.city.trim()) {
-      newErrors.shippingCity = "La ville de livraison est requise"
+      newErrors.shippingCity = "La ville de livraison est requise";
     }
     if (!data.shippingAddress.postalCode.trim()) {
-      newErrors.shippingPostalCode = "Le code postal de livraison est requis"
+      newErrors.shippingPostalCode = "Le code postal de livraison est requis";
     }
 
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (validateForm()) {
-      onNext()
+      onNext();
     }
-  }
+  };
 
   const updateShippingAddress = (field: string, value: string) => {
     onUpdate({
@@ -57,25 +63,25 @@ export function ShippingStep({ data, onUpdate, onNext, onPrev, subtotal }: Shipp
         ...data.shippingAddress,
         [field]: value,
       },
-    })
+    });
     if (errors[`shipping${field.charAt(0).toUpperCase() + field.slice(1)}`]) {
       setErrors({
         ...errors,
         [`shipping${field.charAt(0).toUpperCase() + field.slice(1)}`]: "",
-      })
+      });
     }
-  }
+  };
 
   const handleSameAsBilling = (checked: boolean) => {
     // Correction ici: sameAsBilling au lieu de sameAsBinding
     onUpdate({
       sameAsBilling: checked, // Correction ici
       ...(checked && { shippingAddress: data.billingAddress }),
-    })
-  }
+    });
+  };
 
-  const standardShippingCost = subtotal >= 50 ? 0 : 4.99
-  const expressShippingCost = 9.99
+  const standardShippingCost = subtotal >= 50 ? 0 : 4.99;
+  const expressShippingCost = 9.99;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -83,8 +89,14 @@ export function ShippingStep({ data, onUpdate, onNext, onPrev, subtotal }: Shipp
         <h3 className="text-lg font-semibold mb-4">Adresse de livraison</h3>
 
         <div className="flex items-center space-x-2 mb-4">
-          <Checkbox id="sameAsBilling" checked={data.sameAsBilling} onCheckedChange={handleSameAsBilling} />
-          <Label htmlFor="sameAsBilling">Utiliser la même adresse que la facturation</Label>
+          <Checkbox
+            id="sameAsBilling"
+            checked={data.sameAsBilling}
+            onCheckedChange={handleSameAsBilling}
+          />
+          <Label htmlFor="sameAsBilling">
+            Utiliser la même adresse que la facturation
+          </Label>
         </div>
 
         {!data.sameAsBilling && (
@@ -94,10 +106,16 @@ export function ShippingStep({ data, onUpdate, onNext, onPrev, subtotal }: Shipp
               <Input
                 id="shippingStreet"
                 value={data.shippingAddress.street}
-                onChange={(e) => updateShippingAddress("street", e.target.value)}
+                onChange={(e) =>
+                  updateShippingAddress("street", e.target.value)
+                }
                 className={errors.shippingStreet ? "border-red-500" : ""}
               />
-              {errors.shippingStreet && <p className="text-red-500 text-sm mt-1">{errors.shippingStreet}</p>}
+              {errors.shippingStreet && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.shippingStreet}
+                </p>
+              )}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -105,20 +123,32 @@ export function ShippingStep({ data, onUpdate, onNext, onPrev, subtotal }: Shipp
                 <Input
                   id="shippingCity"
                   value={data.shippingAddress.city}
-                  onChange={(e) => updateShippingAddress("city", e.target.value)}
+                  onChange={(e) =>
+                    updateShippingAddress("city", e.target.value)
+                  }
                   className={errors.shippingCity ? "border-red-500" : ""}
                 />
-                {errors.shippingCity && <p className="text-red-500 text-sm mt-1">{errors.shippingCity}</p>}
+                {errors.shippingCity && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.shippingCity}
+                  </p>
+                )}
               </div>
               <div>
                 <Label htmlFor="shippingPostalCode">Code postal *</Label>
                 <Input
                   id="shippingPostalCode"
                   value={data.shippingAddress.postalCode}
-                  onChange={(e) => updateShippingAddress("postalCode", e.target.value)}
+                  onChange={(e) =>
+                    updateShippingAddress("postalCode", e.target.value)
+                  }
                   className={errors.shippingPostalCode ? "border-red-500" : ""}
                 />
-                {errors.shippingPostalCode && <p className="text-red-500 text-sm mt-1">{errors.shippingPostalCode}</p>}
+                {errors.shippingPostalCode && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.shippingPostalCode}
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -143,7 +173,9 @@ export function ShippingStep({ data, onUpdate, onNext, onPrev, subtotal }: Shipp
                   </Label>
                 </div>
                 <span className="font-medium">
-                  {standardShippingCost === 0 ? "Gratuite" : `${standardShippingCost.toFixed(2)} €`}
+                  {standardShippingCost === 0
+                    ? "Gratuite"
+                    : `${standardShippingCost.toFixed(2)} €`}
                 </span>
               </div>
               <p className="text-sm text-muted-foreground mt-1">
@@ -163,9 +195,13 @@ export function ShippingStep({ data, onUpdate, onNext, onPrev, subtotal }: Shipp
                     Livraison express
                   </Label>
                 </div>
-                <span className="font-medium">{expressShippingCost.toFixed(2)} €</span>
+                <span className="font-medium">
+                  {expressShippingCost.toFixed(2)} €
+                </span>
               </div>
-              <p className="text-sm text-muted-foreground mt-1">Livraison en 24-48h</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Livraison en 24-48h
+              </p>
             </div>
           </div>
         </RadioGroup>
@@ -181,5 +217,5 @@ export function ShippingStep({ data, onUpdate, onNext, onPrev, subtotal }: Shipp
         </Button>
       </div>
     </form>
-  )
+  );
 }

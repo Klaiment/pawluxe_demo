@@ -1,60 +1,64 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { ArrowRight, User, Mail, Phone, MapPin } from "lucide-react"
-import type { CheckoutData } from "@/lib/types"
+import type React from "react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { ArrowRight, User, Mail, Phone, MapPin } from "lucide-react";
+import type { CheckoutData } from "@/lib/types";
 
 interface CustomerInfoStepProps {
-  data: CheckoutData
-  onUpdate: (data: Partial<CheckoutData>) => void
-  onNext: () => void
+  data: CheckoutData;
+  onUpdate: (data: Partial<CheckoutData>) => void;
+  onNext: () => void;
 }
 
-export function CustomerInfoStep({ data, onUpdate, onNext }: CustomerInfoStepProps) {
-  const [errors, setErrors] = useState<Record<string, string>>({})
+export function CustomerInfoStep({
+  data,
+  onUpdate,
+  onNext,
+}: CustomerInfoStepProps) {
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const validateForm = () => {
-    const newErrors: Record<string, string> = {}
+    const newErrors: Record<string, string> = {};
 
     if (!data.customerInfo.firstName.trim()) {
-      newErrors.firstName = "Le prénom est requis"
+      newErrors.firstName = "Le prénom est requis";
     }
     if (!data.customerInfo.lastName.trim()) {
-      newErrors.lastName = "Le nom est requis"
+      newErrors.lastName = "Le nom est requis";
     }
     if (!data.customerInfo.email.trim()) {
-      newErrors.email = "L'email est requis"
+      newErrors.email = "L'email est requis";
     } else if (!/\S+@\S+\.\S+/.test(data.customerInfo.email)) {
-      newErrors.email = "L'email n'est pas valide"
+      newErrors.email = "L'email n'est pas valide";
     }
     if (!data.customerInfo.phone.trim()) {
-      newErrors.phone = "Le téléphone est requis"
+      newErrors.phone = "Le téléphone est requis";
     }
 
     if (!data.billingAddress.street.trim()) {
-      newErrors.street = "L'adresse est requise"
+      newErrors.street = "L'adresse est requise";
     }
     if (!data.billingAddress.city.trim()) {
-      newErrors.city = "La ville est requise"
+      newErrors.city = "La ville est requise";
     }
     if (!data.billingAddress.postalCode.trim()) {
-      newErrors.postalCode = "Le code postal est requis"
+      newErrors.postalCode = "Le code postal est requis";
     }
 
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (validateForm()) {
-      onNext()
+      onNext();
     }
-  }
+  };
 
   const updateCustomerInfo = (field: string, value: string) => {
     onUpdate({
@@ -62,11 +66,11 @@ export function CustomerInfoStep({ data, onUpdate, onNext }: CustomerInfoStepPro
         ...data.customerInfo,
         [field]: value,
       },
-    })
+    });
     if (errors[field]) {
-      setErrors({ ...errors, [field]: "" })
+      setErrors({ ...errors, [field]: "" });
     }
-  }
+  };
 
   const updateBillingAddress = (field: string, value: string) => {
     onUpdate({
@@ -74,11 +78,11 @@ export function CustomerInfoStep({ data, onUpdate, onNext }: CustomerInfoStepPro
         ...data.billingAddress,
         [field]: value,
       },
-    })
+    });
     if (errors[field]) {
-      setErrors({ ...errors, [field]: "" })
+      setErrors({ ...errors, [field]: "" });
     }
-  }
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
@@ -98,9 +102,13 @@ export function CustomerInfoStep({ data, onUpdate, onNext }: CustomerInfoStepPro
               <Input
                 id="firstName"
                 value={data.customerInfo.firstName}
-                onChange={(e) => updateCustomerInfo("firstName", e.target.value)}
+                onChange={(e) =>
+                  updateCustomerInfo("firstName", e.target.value)
+                }
                 className={`pl-4 transition-all duration-300 focus:ring-2 focus:ring-amber-500 ${
-                  errors.firstName ? "border-red-500 bg-red-50" : "border-amber-200 focus:border-amber-500"
+                  errors.firstName
+                    ? "border-red-500 bg-red-50"
+                    : "border-amber-200 focus:border-amber-500"
                 }`}
                 placeholder="Votre prénom"
               />
@@ -122,7 +130,9 @@ export function CustomerInfoStep({ data, onUpdate, onNext }: CustomerInfoStepPro
               value={data.customerInfo.lastName}
               onChange={(e) => updateCustomerInfo("lastName", e.target.value)}
               className={`transition-all duration-300 focus:ring-2 focus:ring-amber-500 ${
-                errors.lastName ? "border-red-500 bg-red-50" : "border-amber-200 focus:border-amber-500"
+                errors.lastName
+                  ? "border-red-500 bg-red-50"
+                  : "border-amber-200 focus:border-amber-500"
               }`}
               placeholder="Votre nom"
             />
@@ -146,7 +156,9 @@ export function CustomerInfoStep({ data, onUpdate, onNext }: CustomerInfoStepPro
                 value={data.customerInfo.email}
                 onChange={(e) => updateCustomerInfo("email", e.target.value)}
                 className={`pl-10 transition-all duration-300 focus:ring-2 focus:ring-amber-500 ${
-                  errors.email ? "border-red-500 bg-red-50" : "border-amber-200 focus:border-amber-500"
+                  errors.email
+                    ? "border-red-500 bg-red-50"
+                    : "border-amber-200 focus:border-amber-500"
                 }`}
                 placeholder="votre@email.com"
               />
@@ -170,7 +182,9 @@ export function CustomerInfoStep({ data, onUpdate, onNext }: CustomerInfoStepPro
                 value={data.customerInfo.phone}
                 onChange={(e) => updateCustomerInfo("phone", e.target.value)}
                 className={`pl-10 transition-all duration-300 focus:ring-2 focus:ring-amber-500 ${
-                  errors.phone ? "border-red-500 bg-red-50" : "border-amber-200 focus:border-amber-500"
+                  errors.phone
+                    ? "border-red-500 bg-red-50"
+                    : "border-amber-200 focus:border-amber-500"
                 }`}
                 placeholder="+33 1 23 45 67 89"
               />
@@ -202,7 +216,9 @@ export function CustomerInfoStep({ data, onUpdate, onNext }: CustomerInfoStepPro
               value={data.billingAddress.street}
               onChange={(e) => updateBillingAddress("street", e.target.value)}
               className={`transition-all duration-300 focus:ring-2 focus:ring-amber-500 ${
-                errors.street ? "border-red-500 bg-red-50" : "border-amber-200 focus:border-amber-500"
+                errors.street
+                  ? "border-red-500 bg-red-50"
+                  : "border-amber-200 focus:border-amber-500"
               }`}
               placeholder="123 Rue de la Paix"
             />
@@ -224,7 +240,9 @@ export function CustomerInfoStep({ data, onUpdate, onNext }: CustomerInfoStepPro
                 value={data.billingAddress.city}
                 onChange={(e) => updateBillingAddress("city", e.target.value)}
                 className={`transition-all duration-300 focus:ring-2 focus:ring-amber-500 ${
-                  errors.city ? "border-red-500 bg-red-50" : "border-amber-200 focus:border-amber-500"
+                  errors.city
+                    ? "border-red-500 bg-red-50"
+                    : "border-amber-200 focus:border-amber-500"
                 }`}
                 placeholder="Paris"
               />
@@ -243,9 +261,13 @@ export function CustomerInfoStep({ data, onUpdate, onNext }: CustomerInfoStepPro
               <Input
                 id="postalCode"
                 value={data.billingAddress.postalCode}
-                onChange={(e) => updateBillingAddress("postalCode", e.target.value)}
+                onChange={(e) =>
+                  updateBillingAddress("postalCode", e.target.value)
+                }
                 className={`transition-all duration-300 focus:ring-2 focus:ring-amber-500 ${
-                  errors.postalCode ? "border-red-500 bg-red-50" : "border-amber-200 focus:border-amber-500"
+                  errors.postalCode
+                    ? "border-red-500 bg-red-50"
+                    : "border-amber-200 focus:border-amber-500"
                 }`}
                 placeholder="75001"
               />
@@ -282,5 +304,5 @@ export function CustomerInfoStep({ data, onUpdate, onNext }: CustomerInfoStepPro
         </Button>
       </div>
     </form>
-  )
+  );
 }

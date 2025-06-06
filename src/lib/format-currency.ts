@@ -5,7 +5,6 @@ export function formatCurrency(
 ) {
   const majorUnits = value / 100;
   try {
-
     return new Intl.NumberFormat(locale, {
       style: "currency",
       currency: currencyCode,

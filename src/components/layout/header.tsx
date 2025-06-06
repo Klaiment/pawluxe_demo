@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useMobile } from "@/hooks/use-mobile";
 import { useCart } from "@/components/cart/cart-provider.tsx";
 import { Link } from "react-router";
-import {BadgeCustom} from "@/components/ui/badge-custom.tsx";
+import { BadgeCustom } from "@/components/ui/badge-custom.tsx";
 
 export const Header = () => {
   const { cart } = useCart();

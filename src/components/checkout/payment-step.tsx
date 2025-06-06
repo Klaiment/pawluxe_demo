@@ -1,56 +1,69 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { ArrowLeft, ArrowRight, CreditCard, Smartphone, Building, Lock, Shield } from "lucide-react"
-import type { CheckoutData } from "@/lib/types"
+import type React from "react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  ArrowLeft,
+  ArrowRight,
+  CreditCard,
+  Smartphone,
+  Building,
+  Lock,
+  Shield,
+} from "lucide-react";
+import type { CheckoutData } from "@/lib/types";
 
 interface PaymentStepProps {
-  data: CheckoutData
-  onUpdate: (data: Partial<CheckoutData>) => void
-  onNext: () => void
-  onPrev: () => void
+  data: CheckoutData;
+  onUpdate: (data: Partial<CheckoutData>) => void;
+  onNext: () => void;
+  onPrev: () => void;
 }
 
-export function PaymentStep({ data, onUpdate, onNext, onPrev }: PaymentStepProps) {
+export function PaymentStep({
+  data,
+  onUpdate,
+  onNext,
+  onPrev,
+}: PaymentStepProps) {
   const [cardData, setCardData] = useState({
     number: "",
     expiry: "",
     cvv: "",
     name: "",
-  })
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    onNext()
-  }
+    e.preventDefault();
+    onNext();
+  };
 
   const formatCardNumber = (value: string) => {
-    const v = value.replace(/\s+/g, "").replace(/[^0-9]/gi, "")
-    const matches = v.match(/\d{4,16}/g)
-    const match = (matches && matches[0]) || ""
-    const parts = []
+    const v = value.replace(/\s+/g, "").replace(/[^0-9]/gi, "");
+    const matches = v.match(/\d{4,16}/g);
+    const match = (matches && matches[0]) || "";
+    const parts = [];
     for (let i = 0, len = match.length; i < len; i += 4) {
-      parts.push(match.substring(i, i + 4))
+      parts.push(match.substring(i, i + 4));
     }
     if (parts.length) {
-      return parts.join(" ")
+      return parts.join(" ");
     } else {
-      return v
+      return v;
     }
-  }
+  };
 
   const formatExpiry = (value: string) => {
-    const v = value.replace(/\s+/g, "").replace(/[^0-9]/gi, "")
+    const v = value.replace(/\s+/g, "").replace(/[^0-9]/gi, "");
     if (v.length >= 2) {
-      return v.substring(0, 2) + "/" + v.substring(2, 4)
+      return v.substring(0, 2) + "/" + v.substring(2, 4);
     }
-    return v
-  }
+    return v;
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
@@ -74,16 +87,25 @@ export function PaymentStep({ data, onUpdate, onNext, onPrev }: PaymentStepProps
             }`}
           >
             <div className="flex items-center space-x-4">
-              <RadioGroupItem value="card" id="card" className="text-amber-600" />
+              <RadioGroupItem
+                value="card"
+                id="card"
+                className="text-amber-600"
+              />
               <div className="flex items-center space-x-3 flex-1">
                 <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
                   <CreditCard className="h-5 w-5 text-white" />
                 </div>
                 <div>
-                  <Label htmlFor="card" className="font-medium text-base cursor-pointer">
+                  <Label
+                    htmlFor="card"
+                    className="font-medium text-base cursor-pointer"
+                  >
                     Carte bancaire
                   </Label>
-                  <p className="text-sm text-muted-foreground">Visa, Mastercard, American Express</p>
+                  <p className="text-sm text-muted-foreground">
+                    Visa, Mastercard, American Express
+                  </p>
                 </div>
               </div>
               <div className="flex space-x-2">
@@ -110,7 +132,12 @@ export function PaymentStep({ data, onUpdate, onNext, onPrev }: PaymentStepProps
                       <Input
                         id="cardNumber"
                         value={cardData.number}
-                        onChange={(e) => setCardData({ ...cardData, number: formatCardNumber(e.target.value) })}
+                        onChange={(e) =>
+                          setCardData({
+                            ...cardData,
+                            number: formatCardNumber(e.target.value),
+                          })
+                        }
                         placeholder="1234 5678 9012 3456"
                         maxLength={19}
                         className="pl-4 pr-12 border-amber-200 focus:border-amber-500 focus:ring-amber-500"
@@ -127,7 +154,12 @@ export function PaymentStep({ data, onUpdate, onNext, onPrev }: PaymentStepProps
                       <Input
                         id="expiry"
                         value={cardData.expiry}
-                        onChange={(e) => setCardData({ ...cardData, expiry: formatExpiry(e.target.value) })}
+                        onChange={(e) =>
+                          setCardData({
+                            ...cardData,
+                            expiry: formatExpiry(e.target.value),
+                          })
+                        }
                         placeholder="MM/AA"
                         maxLength={5}
                         className="border-amber-200 focus:border-amber-500 focus:ring-amber-500"
@@ -141,7 +173,12 @@ export function PaymentStep({ data, onUpdate, onNext, onPrev }: PaymentStepProps
                         id="cvv"
                         value={cardData.cvv}
                         onChange={(e) =>
-                          setCardData({ ...cardData, cvv: e.target.value.replace(/\D/g, "").substring(0, 4) })
+                          setCardData({
+                            ...cardData,
+                            cvv: e.target.value
+                              .replace(/\D/g, "")
+                              .substring(0, 4),
+                          })
                         }
                         placeholder="123"
                         maxLength={4}
@@ -157,7 +194,9 @@ export function PaymentStep({ data, onUpdate, onNext, onPrev }: PaymentStepProps
                     <Input
                       id="cardName"
                       value={cardData.name}
-                      onChange={(e) => setCardData({ ...cardData, name: e.target.value })}
+                      onChange={(e) =>
+                        setCardData({ ...cardData, name: e.target.value })
+                      }
                       placeholder="Nom complet"
                       className="border-amber-200 focus:border-amber-500 focus:ring-amber-500"
                     />
@@ -166,7 +205,9 @@ export function PaymentStep({ data, onUpdate, onNext, onPrev }: PaymentStepProps
 
                 <div className="flex items-center space-x-2 text-sm text-muted-foreground bg-green-50 p-3 rounded-lg">
                   <Shield className="h-4 w-4 text-green-600" />
-                  <span>Vos données sont protégées par un cryptage SSL 256 bits</span>
+                  <span>
+                    Vos données sont protégées par un cryptage SSL 256 bits
+                  </span>
                 </div>
               </div>
             )}
@@ -181,16 +222,25 @@ export function PaymentStep({ data, onUpdate, onNext, onPrev }: PaymentStepProps
             }`}
           >
             <div className="flex items-center space-x-4">
-              <RadioGroupItem value="paypal" id="paypal" className="text-amber-600" />
+              <RadioGroupItem
+                value="paypal"
+                id="paypal"
+                className="text-amber-600"
+              />
               <div className="flex items-center space-x-3 flex-1">
                 <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-700 rounded-lg flex items-center justify-center">
                   <Smartphone className="h-5 w-5 text-white" />
                 </div>
                 <div>
-                  <Label htmlFor="paypal" className="font-medium text-base cursor-pointer">
+                  <Label
+                    htmlFor="paypal"
+                    className="font-medium text-base cursor-pointer"
+                  >
                     PayPal
                   </Label>
-                  <p className="text-sm text-muted-foreground">Paiement rapide et sécurisé</p>
+                  <p className="text-sm text-muted-foreground">
+                    Paiement rapide et sécurisé
+                  </p>
                 </div>
               </div>
               <div className="w-16 h-8 bg-gradient-to-r from-blue-600 to-blue-800 rounded flex items-center justify-center text-xs text-white font-bold">
@@ -202,7 +252,8 @@ export function PaymentStep({ data, onUpdate, onNext, onPrev }: PaymentStepProps
               <div className="mt-4 p-4 bg-blue-50 rounded-lg border-t border-blue-200">
                 <p className="text-sm text-blue-700 flex items-center">
                   <Smartphone className="h-4 w-4 mr-2" />
-                  Vous serez redirigé vers PayPal pour finaliser votre paiement en toute sécurité.
+                  Vous serez redirigé vers PayPal pour finaliser votre paiement
+                  en toute sécurité.
                 </p>
               </div>
             )}
@@ -217,16 +268,25 @@ export function PaymentStep({ data, onUpdate, onNext, onPrev }: PaymentStepProps
             }`}
           >
             <div className="flex items-center space-x-4">
-              <RadioGroupItem value="transfer" id="transfer" className="text-amber-600" />
+              <RadioGroupItem
+                value="transfer"
+                id="transfer"
+                className="text-amber-600"
+              />
               <div className="flex items-center space-x-3 flex-1">
                 <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-green-600 rounded-lg flex items-center justify-center">
                   <Building className="h-5 w-5 text-white" />
                 </div>
                 <div>
-                  <Label htmlFor="transfer" className="font-medium text-base cursor-pointer">
+                  <Label
+                    htmlFor="transfer"
+                    className="font-medium text-base cursor-pointer"
+                  >
                     Virement bancaire
                   </Label>
-                  <p className="text-sm text-muted-foreground">Paiement par virement SEPA</p>
+                  <p className="text-sm text-muted-foreground">
+                    Paiement par virement SEPA
+                  </p>
                 </div>
               </div>
             </div>
@@ -235,7 +295,8 @@ export function PaymentStep({ data, onUpdate, onNext, onPrev }: PaymentStepProps
               <div className="mt-4 p-4 bg-green-50 rounded-lg border-t border-green-200">
                 <p className="text-sm text-green-700 flex items-center">
                   <Building className="h-4 w-4 mr-2" />
-                  Les informations de virement vous seront envoyées par email après confirmation de votre commande.
+                  Les informations de virement vous seront envoyées par email
+                  après confirmation de votre commande.
                 </p>
               </div>
             )}
@@ -262,5 +323,5 @@ export function PaymentStep({ data, onUpdate, onNext, onPrev }: PaymentStepProps
         </Button>
       </div>
     </form>
-  )
+  );
 }

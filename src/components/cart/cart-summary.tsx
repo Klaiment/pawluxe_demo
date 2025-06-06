@@ -54,7 +54,7 @@ export const CartSummary = ({
 
         <div className="flex justify-between font-semibold text-lg">
           <span>Total</span>
-          <span className="text-amber-800">{total.toFixed(2)}  €</span>
+          <span className="text-amber-800">{total.toFixed(2)} €</span>
         </div>
 
         {subtotal >= freeShippingThreshold && (
