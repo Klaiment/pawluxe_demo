@@ -14,8 +14,10 @@ import type { Product } from "@/lib/types.ts";
 
 export const ProductSectionHomePage = () => {
   const [featuredProducts, setFeaturedProducts] = useState(null);
-  const [featuredRef, featuredInView] = useInView({ threshold: 0.1, triggerOnce: true })
-
+  const [featuredRef, featuredInView] = useInView({
+    threshold: 0.1,
+    triggerOnce: true,
+  });
 
   useEffect(() => {
     const fetchFeaturedProducts = async () => {
@@ -23,7 +25,7 @@ export const ProductSectionHomePage = () => {
       // @ts-ignore
       const cleanedProducts = (products.products as { items: Product[] }).items;
       const topFacetValues = cleanedProducts.filter((product: Product) =>
-          product.facetValues?.some((facet) => facet.name === "top")
+        product.facetValues?.some((facet) => facet.name === "top"),
       );
       setFeaturedProducts(topFacetValues);
       console.log("Featured Products:", topFacetValues);

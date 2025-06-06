@@ -271,9 +271,9 @@ export default function ProductsPage() {
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full md:w-auto">
                 <div className="flex items-center gap-2 w-full sm:w-auto">
                   <Button
-                      variant="outline"
-                      onClick={() => setIsFilterOpen(!isFilterOpen)}
-                      className="border-amber-200 text-amber-700 hover:bg-amber-50 w-full sm:w-auto"
+                    variant="outline"
+                    onClick={() => setIsFilterOpen(!isFilterOpen)}
+                    className="border-amber-200 text-amber-700 hover:bg-amber-50 w-full sm:w-auto"
                   >
                     <Filter className="mr-2 h-4 w-4" />
                     Filtres
@@ -283,14 +283,14 @@ export default function ProductsPage() {
                   </Button>
 
                   {getActiveFiltersCount() > 0 && (
-                      <Button
-                          variant="ghost"
-                          onClick={resetFilters}
-                          className="text-amber-700 hover:bg-amber-50 w-full sm:w-auto"
-                      >
-                        <X className="mr-2 h-4 w-4" />
-                        Réinitialiser
-                      </Button>
+                    <Button
+                      variant="ghost"
+                      onClick={resetFilters}
+                      className="text-amber-700 hover:bg-amber-50 w-full sm:w-auto"
+                    >
+                      <X className="mr-2 h-4 w-4" />
+                      Réinitialiser
+                    </Button>
                   )}
                 </div>
               </div>
@@ -303,8 +303,8 @@ export default function ProductsPage() {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
-                        variant="outline"
-                        className="w-full sm:w-auto justify-between border-amber-200 text-amber-700 hover:bg-amber-50"
+                      variant="outline"
+                      className="w-full sm:w-auto justify-between border-amber-200 text-amber-700 hover:bg-amber-50"
                     >
                       <ArrowUpDown className="mr-2 h-4 w-4" />
                       {sortOption === "featured" && "En vedette"}
@@ -316,29 +316,34 @@ export default function ProductsPage() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
-                      align="end"
-                      className="bg-white/90 backdrop-blur-sm border-amber-100"
+                    align="end"
+                    className="bg-white/90 backdrop-blur-sm border-amber-100"
                   >
                     <DropdownMenuItem onClick={() => setSortOption("featured")}>
                       En vedette
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setSortOption("price-asc")}>
+                    <DropdownMenuItem
+                      onClick={() => setSortOption("price-asc")}
+                    >
                       Prix croissant
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setSortOption("price-desc")}>
+                    <DropdownMenuItem
+                      onClick={() => setSortOption("price-desc")}
+                    >
                       Prix décroissant
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => setSortOption("name-asc")}>
                       A-Z
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setSortOption("name-desc")}>
+                    <DropdownMenuItem
+                      onClick={() => setSortOption("name-desc")}
+                    >
                       Z-A
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
             </div>
-
 
             <AnimatePresence>
               {isFilterOpen && (

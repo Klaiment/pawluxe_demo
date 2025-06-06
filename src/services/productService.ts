@@ -34,6 +34,7 @@ export async function fetchAllProductsFromApi() {
               productId
               price
               stockLevel
+              actualStockLevel
             }
           }
         }

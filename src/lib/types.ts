@@ -27,6 +27,7 @@ export interface Product {
       productId: string;
       stockLevel: string;
       price: string;
+      actualStockLevel: number;
     }[];
   };
 }

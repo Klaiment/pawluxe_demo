@@ -65,31 +65,31 @@ export function FeaturedProducts({ featuredProducts }) {
           className="flex transition-all duration-500 ease-in-out"
           style={{ transform: `translateX(-${activeIndex * 100}%)` }}
         >
-          {Array.from({ length: Math.ceil((featuredProducts?.length || 0) / 4) }).map(
-            (_, pageIndex) => (
-              <div key={pageIndex} className="min-w-full">
-                <motion.div
-                  variants={container}
-                  initial="hidden"
-                  animate="show"
-                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
-                >
-                  {featuredProducts
-                    .slice(pageIndex * 4, pageIndex * 4 + 4)
-                    .map((product) => (
-                      <motion.div key={product.id} variants={item}>
-                        <Link
-                          to={`/products/${product.slug}`}
-                          className="group block h-full"
-                        >
-                          <ProductCard product={product} showAddToCart={true} />
-                        </Link>
-                      </motion.div>
-                    ))}
-                </motion.div>
-              </div>
-            ),
-          )}
+          {Array.from({
+            length: Math.ceil((featuredProducts?.length || 0) / 4),
+          }).map((_, pageIndex) => (
+            <div key={pageIndex} className="min-w-full">
+              <motion.div
+                variants={container}
+                initial="hidden"
+                animate="show"
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+              >
+                {featuredProducts
+                  .slice(pageIndex * 4, pageIndex * 4 + 4)
+                  .map((product) => (
+                    <motion.div key={product.id} variants={item}>
+                      <Link
+                        to={`/product/${product.slug}`}
+                        className="group block h-full"
+                      >
+                        <ProductCard product={product} showAddToCart={true} />
+                      </Link>
+                    </motion.div>
+                  ))}
+              </motion.div>
+            </div>
+          ))}
         </motion.div>
       </div>
 
